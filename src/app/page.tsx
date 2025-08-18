@@ -1,16 +1,12 @@
-import { ColorPaletteDemo } from "@/components/ColorPaletteDemo";
-import { ECommerceExample } from "@/components/ECommerceExample";
-import { ThemeTest } from "@/components/ThemeTest";
-import { Stack, Divider } from "@mantine/core";
+import { LoginForm } from './auth/login/LoginForm';
+import './auth/login/login.css';
 
 export default function Home() {
   return (
-    <Stack gap="xl">
-      <ThemeTest />
-      <Divider size="sm" />
-      <ColorPaletteDemo />
-      <Divider size="sm" />
-      <ECommerceExample />
-    </Stack>
+    <div className="auth-container">
+      <div className="auth-content">
+        <LoginForm />
+      </div>
+    </div>
   );
 }

@@ -5,13 +5,15 @@ This project uses **Mantine** as the UI library with a custom color palette base
 ## 🎨 Color Palette
 
 ### Brand Colors (Primary)
+
 - **brand.0**: `#f5f6fd` - Lightest backgrounds
 - **brand.3**: `#B2B0E8` - Your lightest brand color
-- **brand.5**: `#7A85C1` - Your medium brand color  
+- **brand.5**: `#7A85C1` - Your medium brand color
 - **brand.7**: `#3B38A0` - Your medium-dark brand color
 - **brand.9**: `#1A2A80` - Your darkest brand color (primary)
 
 ### Supporting Colors
+
 - **secondary**: Orange/amber for contrast and CTAs
 - **success**: Green for positive actions
 - **warning**: Yellow/amber for alerts
@@ -21,6 +23,7 @@ This project uses **Mantine** as the UI library with a custom color palette base
 ## 🌓 Dark Mode Support
 
 The theme automatically adapts to light/dark mode with proper contrast ratios:
+
 - Uses `defaultColorScheme="auto"` to respect system preferences
 - Different color shades for light/dark modes
 - Proper contrast for accessibility
@@ -46,27 +49,29 @@ src/
 ## 🚀 Usage Examples
 
 ### Basic Color Usage
+
 ```tsx
 import { Button } from '@mantine/core';
 import { getColor } from '@/theme/colors';
 
 // Using color in components
-<Button color="brand">Primary Button</Button>
+<Button color="brand">Primary Button</Button>;
 
 // Using color in styles
 const styles = {
   backgroundColor: getColor('brand', 6),
-  color: getColor('neutral', 0)
+  color: getColor('neutral', 0),
 };
 ```
 
 ### Dark Mode Toggle
+
 ```tsx
 import { useMantineColorScheme } from '@mantine/core';
 
 function DarkModeToggle() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  
+
   return (
     <Button onClick={() => toggleColorScheme()}>
       {colorScheme === 'dark' ? '☀️ Light' : '🌙 Dark'}
@@ -76,16 +81,15 @@ function DarkModeToggle() {
 ```
 
 ### Custom Theme Hook
+
 ```tsx
 import { useCustomTheme } from '@/theme/utils';
 
 function MyComponent() {
   const theme = useCustomTheme();
-  
+
   return (
-    <div style={{ color: theme.getColor('brand', 6) }}>
-      Themed content
-    </div>
+    <div style={{ color: theme.getColor('brand', 6) }}>Themed content</div>
   );
 }
 ```
@@ -93,18 +97,21 @@ function MyComponent() {
 ## 🛍️ E-Commerce Specific Features
 
 ### Product Cards
+
 - Consistent brand colors
 - Sale/New badges with appropriate colors
 - Price highlighting with brand colors
 - Hover effects and animations
 
 ### Status Indicators
+
 - **Success** (green): Completed orders, in stock
 - **Warning** (yellow): Low stock, pending
 - **Danger** (red): Out of stock, errors
 - **Brand** (purple): Processing, featured items
 
 ### Call-to-Action Buttons
+
 - Primary actions use `brand` color
 - Secondary actions use `secondary` color
 - Success actions (checkout) use `success` color
@@ -113,8 +120,9 @@ function MyComponent() {
 ## 📱 Responsive Design
 
 The theme includes responsive breakpoints:
+
 - **xs**: `30em` (480px)
-- **sm**: `48em` (768px) 
+- **sm**: `48em` (768px)
 - **md**: `64em` (1024px)
 - **lg**: `74em` (1184px)
 - **xl**: `90em` (1440px)
@@ -129,6 +137,7 @@ The theme includes responsive breakpoints:
 ## 🔧 Customization
 
 ### Adding New Colors
+
 ```typescript
 // In src/theme/colors.ts
 export const customColors = {
@@ -140,6 +149,7 @@ export const customColors = {
 ```
 
 ### Modifying Components
+
 ```typescript
 // In src/theme/theme.ts
 components: {

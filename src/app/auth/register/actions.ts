@@ -1,0 +1,63 @@
+'use server';
+
+import { z } from 'zod';
+
+const registerSchema = z
+  .object({
+    firstName: z.string().min(2, 'First name must be at least 2 characters'),
+    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string().min(6, 'Password confirmation is required'),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+export type RegisterFormData = z.infer<typeof registerSchema>;
+
+export async function registerAction(formData: RegisterFormData) {
+  try {
+    // Validate the form data
+    const validatedData = registerSchema.parse(formData);
+
+    // Here you would typically:
+    // 1. Check if email already exists in database
+    // 2. Hash the password
+    // 3. Save user to database
+    // 4. Send verification email
+    // 5. Create session/JWT token
+    // 6. Set cookies
+    // 7. Redirect user
+
+    // For now, we'll simulate a registration process
+    console.log('Registration attempt:', {
+      ...validatedData,
+      password: '[HIDDEN]',
+      confirmPassword: '[HIDDEN]',
+    });
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Mock validation - replace with real registration logic
+    if (validatedData.email === 'existing@example.com') {
+      return { success: false, error: 'Email already exists' };
+    }
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues[0]?.message || 'Validation failed',
+      };
+    }
+
+    return {
+      success: false,
+      error: 'An unexpected error occurred',
+    };
+  }
+}

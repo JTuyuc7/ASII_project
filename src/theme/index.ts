@@ -2,10 +2,10 @@
 export { ThemeProvider, ColorSchemeScript } from './ThemeProvider';
 export { theme } from './theme';
 export { customColors, getColor } from './colors';
-export { 
-  useCustomTheme, 
-  colorSchemes, 
-  spacing, 
-  shadows, 
-  breakpoints 
+export {
+  useCustomTheme,
+  colorSchemes,
+  spacing,
+  shadows,
+  breakpoints,
 } from './utils';
