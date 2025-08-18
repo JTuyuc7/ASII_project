@@ -1,4 +1,4 @@
-import { createTheme, MantineProvider } from '@mantine/core';
+import { createTheme } from '@mantine/core';
 import { customColors } from './colors';
 
 export const theme = createTheme({
@@ -12,10 +12,12 @@ export const theme = createTheme({
   black: '#1a1b1e',
 
   // Typography
-  fontFamily: 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+  fontFamily:
+    'Montserrat, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
   fontFamilyMonospace: 'var(--font-geist-mono), Monaco, Courier, monospace',
   headings: {
-    fontFamily: 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+    fontFamily:
+      'Montserrat, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
     fontWeight: '600',
     sizes: {
       h1: { fontSize: '2.5rem', lineHeight: '1.2' },
@@ -118,11 +120,11 @@ export const theme = createTheme({
     footerHeight: '12rem',
     sidebarWidth: '16rem',
     contentMaxWidth: '75rem',
-    
+
     // Animation durations
     transitionSpeed: '0.15s',
     transitionSpeedSlow: '0.3s',
-    
+
     // Z-index values
     zIndex: {
       dropdown: 1000,
