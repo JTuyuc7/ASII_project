@@ -1,3 +1,5 @@
+import Header from '@/app/components/header/page';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ColorSchemeScript, ThemeProvider } from '@/theme/ThemeProvider';
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
@@ -35,7 +37,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${montserrat.variable}`} suppressHydrationWarning>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Header />
+            <main>{children}</main>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

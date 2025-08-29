@@ -1,6 +1,7 @@
 /* Login page custom styles */
 .auth-container {
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;

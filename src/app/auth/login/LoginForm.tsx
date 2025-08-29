@@ -1,119 +1,89 @@
 'use client';
 
-import {
-  Alert,
-  Anchor,
-  Button,
-  Paper,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { IconAlertCircle } from '@tabler/icons-react';
-import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
-import { z } from 'zod';
 import { loginAction } from './actions';
+import './login.css';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const loginSchema = z.object({
-  email: z.string().email('Direccion de correo electronico invalida'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-});
+interface LoginFormProps {
+  onSwitchToRegister?: () => void;
+}
 
-type LoginFormData = z.infer<typeof loginSchema>;
-
-export function LoginForm() {
+export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { login, setCurrentView } = useAuth();
 
-  const form = useForm<LoginFormData>({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validate: {
-      email: (value: string) => {
-        const result = z.string().email().safeParse(value);
-        return result.success ? null : 'Invalid email address';
-      },
-      password: (value: string) => {
-        const result = z.string().min(6).safeParse(value);
-        return result.success ? null : 'Password must be at least 6 characters';
-      },
-    },
-  });
-
-  const handleSubmit = async (values: LoginFormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
     setLoading(true);
-    setError(null);
 
     try {
-      const result = await loginAction(values);
+      const result = await loginAction({ email, password });
 
-      if (!result.success) {
-        setError(result.error || 'An error occurred during login');
+      if (result.success && result.token) {
+        login(result.token);
       } else {
-        // Handle successful login - redirect or update UI
-        console.log('Login successful');
+        setError(result.error || 'Error al iniciar sesión');
       }
     } catch (err) {
-      setError('An unexpected error occurred');
       console.log(err, 'Error details');
+      setError('Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSwitchToRegister = () => {
+    if (onSwitchToRegister) {
+      onSwitchToRegister();
+    } else {
+      setCurrentView('register');
+    }
+  };
+
   return (
-    <Paper shadow="lg" p="xl" radius="md" w={500}>
-      <Title order={2} ta="center" mb="md">
-        Bienvenido!
-      </Title>
+    <div className="auth-form-container">
+      <h2>Iniciar Sesión</h2>
+      <form onSubmit={handleSubmit} className="auth-form">
+        {error && <div className="error-message">{error}</div>}
 
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack>
-          {error && (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title="Error"
-              color="red"
-            >
-              {error}
-            </Alert>
-          )}
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="Correo electrónico"
+          required
+          disabled={loading}
+        />
 
-          <TextInput
-            size="lg"
-            required
-            label="Correo"
-            placeholder="tu@correo.com"
-            {...form.getInputProps('email')}
-          />
+        <input
+          type="password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="Contraseña"
+          required
+          disabled={loading}
+        />
 
-          <PasswordInput
-            size="lg"
-            required
-            label="Contraseña"
-            placeholder="Tu contraseña"
-            {...form.getInputProps('password')}
-          />
-
-          <Button size="lg" type="submit" loading={loading} fullWidth mt="md">
-            Iniciar sesión
-          </Button>
-
-          <Text ta="center" mt="md" size="lg">
-            ¿No tienes una cuenta?{' '}
-            <Anchor component={Link} href="/auth/register" size="lg">
-              Crea una
-            </Anchor>
-          </Text>
-        </Stack>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+        </button>
       </form>
-    </Paper>
+
+      <p>
+        ¿No tienes cuenta?{' '}
+        <button
+          type="button"
+          onClick={handleSwitchToRegister}
+          className="link-button"
+        >
+          Crear cuenta
+        </button>
+      </p>
+    </div>
   );
 }

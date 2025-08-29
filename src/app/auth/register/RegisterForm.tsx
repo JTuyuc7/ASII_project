@@ -1,179 +1,131 @@
 'use client';
 
-import {
-  Alert,
-  Anchor,
-  Button,
-  Grid,
-  Paper,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { IconAlertCircle } from '@tabler/icons-react';
-import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
-import { z } from 'zod';
 import { registerAction } from './actions';
+import './register.css';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const registerSchema = z
-  .object({
-    firstName: z.string().min(2, 'First name must be at least 2 characters'),
-    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(6, 'Password confirmation is required'),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
+interface RegisterFormProps {
+  onSwitchToLogin?: () => void;
+}
+
+export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-
-type RegisterFormData = z.infer<typeof registerSchema>;
-
-export function RegisterForm() {
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { login, setCurrentView } = useAuth();
 
-  const form = useForm<RegisterFormData>({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-    validate: {
-      firstName: (value: string) => {
-        const result = z.string().min(2).safeParse(value);
-        return result.success
-          ? null
-          : 'First name must be at least 2 characters';
-      },
-      lastName: (value: string) => {
-        const result = z.string().min(2).safeParse(value);
-        return result.success
-          ? null
-          : 'Last name must be at least 2 characters';
-      },
-      email: (value: string) => {
-        const result = z.string().email().safeParse(value);
-        return result.success ? null : 'Invalid email address';
-      },
-      password: (value: string) => {
-        const result = z.string().min(6).safeParse(value);
-        return result.success ? null : 'Password must be at least 6 characters';
-      },
-      confirmPassword: (value: string, values: RegisterFormData) => {
-        if (value !== values.password) {
-          return "Passwords don't match";
-        }
-        const result = z.string().min(6).safeParse(value);
-        return result.success ? null : 'Password confirmation is required';
-      },
-    },
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
 
-  const handleSubmit = async (values: RegisterFormData) => {
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
     setLoading(true);
-    setError(null);
 
     try {
-      const result = await registerAction(values);
+      const result = await registerAction(formData);
 
-      if (!result.success) {
-        setError(result.error || 'An error occurred during registration');
+      if (result.success && result.token) {
+        login(result.token);
       } else {
-        // Handle successful registration
-        console.log('Registration successful');
+        setError(result.error || 'Error al registrar');
       }
-      /* eslint-disable @typescript-eslint/no-unused-vars */
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.log(err, 'Error details');
+      setError('Error al registrar');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSwitchToLogin = () => {
+    if (onSwitchToLogin) {
+      onSwitchToLogin();
+    } else {
+      setCurrentView('login');
+    }
+  };
+
   return (
-    <Paper shadow="lg" p="xl" radius="md" w={500}>
-      <Title order={2} ta="center" mb="md">
-        Crear cuenta
-      </Title>
+    <div className="auth-form-container">
+      <h2>Crear Cuenta</h2>
+      <form onSubmit={handleSubmit} className="auth-form">
+        {error && <div className="error-message">{error}</div>}
 
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack>
-          {error && (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title="Error"
-              color="red"
-            >
-              {error}
-            </Alert>
-          )}
+        <input
+          type="text"
+          value={formData.firstName}
+          onChange={e =>
+            setFormData({ ...formData, firstName: e.target.value })
+          }
+          placeholder="Nombre"
+          required
+          disabled={loading}
+        />
 
-          <Grid>
-            <Grid.Col span={6}>
-              <TextInput
-                size="lg"
-                required
-                label="Nombre"
-                placeholder="Tu nombre"
-                {...form.getInputProps('firstName')}
-              />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput
-                size="lg"
-                required
-                label="Apellido"
-                placeholder="Tu apellido"
-                {...form.getInputProps('lastName')}
-              />
-            </Grid.Col>
-          </Grid>
+        <input
+          type="text"
+          value={formData.lastName}
+          onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+          placeholder="Apellido"
+          required
+          disabled={loading}
+        />
 
-          <TextInput
-            size="lg"
-            required
-            label="Correo"
-            placeholder="tu@correo.com"
-            {...form.getInputProps('email')}
-          />
+        <input
+          type="email"
+          value={formData.email}
+          onChange={e => setFormData({ ...formData, email: e.target.value })}
+          placeholder="Correo"
+          required
+          disabled={loading}
+        />
 
-          <PasswordInput
-            size="lg"
-            required
-            label="Contraseña"
-            placeholder="Tu contraseña"
-            {...form.getInputProps('password')}
-          />
+        <input
+          type="password"
+          value={formData.password}
+          onChange={e => setFormData({ ...formData, password: e.target.value })}
+          placeholder="Contraseña"
+          required
+          disabled={loading}
+        />
 
-          <PasswordInput
-            size="lg"
-            required
-            label="Confirmar contraseña"
-            placeholder="Confirma tu contraseña"
-            {...form.getInputProps('confirmPassword')}
-          />
+        <input
+          type="password"
+          value={formData.confirmPassword}
+          onChange={e =>
+            setFormData({ ...formData, confirmPassword: e.target.value })
+          }
+          placeholder="Confirmar contraseña"
+          required
+          disabled={loading}
+        />
 
-          <Button type="submit" loading={loading} fullWidth mt="md" size="lg">
-            Crear cuenta
-          </Button>
-
-          <Text ta="center" mt="md" size="lg">
-            ¿Ya tienes una cuenta?{' '}
-            <Anchor component={Link} href="/auth/login" size="lg">
-              Iniciar sesión
-            </Anchor>
-          </Text>
-        </Stack>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+        </button>
       </form>
-    </Paper>
+
+      <p>
+        ¿Ya tienes cuenta?{' '}
+        <button
+          type="button"
+          onClick={handleSwitchToLogin}
+          className="link-button"
+        >
+          Iniciar sesión
+        </button>
+      </p>
+    </div>
   );
 }
