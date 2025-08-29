@@ -3,5 +3,5 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div style={{ minHeight: '100vh' }}>{children}</div>;
+  return <div style={{ minHeight: '100%' }}>{children}</div>;
 }

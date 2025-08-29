@@ -1,11 +1,18 @@
-import { LoginForm } from './auth/login/LoginForm';
 import './auth/login/login.css';
+import MainPage from './main/page';
 
 export default function Home() {
   return (
-    <div className="auth-container">
-      <div className="auth-content">
-        <LoginForm />
+    <div
+    // className="auth-container"
+    >
+      <div
+      // className="auth-content"
+      >
+        {/* <LoginForm /> */}
+        {/* <LoginPage /> */}
+
+        <MainPage />
       </div>
     </div>
   );

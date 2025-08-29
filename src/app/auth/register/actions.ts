@@ -46,7 +46,7 @@ export async function registerAction(formData: RegisterFormData) {
       return { success: false, error: 'Email already exists' };
     }
 
-    return { success: true };
+    return { success: true, token: 'mock-jwt-token-456' };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {

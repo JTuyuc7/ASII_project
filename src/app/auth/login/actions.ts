@@ -31,7 +31,7 @@ export async function loginAction(formData: LoginFormData) {
       validatedData.email === 'admin@example.com' &&
       validatedData.password === 'password'
     ) {
-      return { success: true };
+      return { success: true, token: 'mock-jwt-token-123' };
     } else {
       return { success: false, error: 'Invalid email or password' };
     }
