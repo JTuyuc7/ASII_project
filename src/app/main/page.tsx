@@ -1,8 +1,12 @@
 'use client';
 // import { RegisterForm } from '@/app/auth/register/RegisterForm'
 import { useAuth } from '@/contexts/AuthContext';
+import { customColors } from '../../theme';
 import LoginPage from '../components/auth/login/loginPage';
 import { RegisterForm } from '../components/auth/register/registerPage';
+import BannerShopPage from '../components/banner-shop/page';
+import OutstandingProducts from '../components/outstanding-products/page';
+import QuickFilters from '../components/quick-filters/page';
 import MainLayout from './layout';
 
 export default function MainPage() {
@@ -39,27 +43,37 @@ export default function MainPage() {
       );
     }
 
-    // Default main content
     return (
-      <div style={{ padding: '2rem' }}>
-        <h1>Welcome to our E-commerce Store</h1>
-        {isAuthenticated ? (
-          <div>
-            <h2>Dashboard</h2>
-            <p>Welcome back! Here's your personalized content.</p>
-            {/* Add your authenticated user content here */}
-          </div>
-        ) : (
-          <div>
-            <h2>Discover Amazing Products</h2>
-            <p>
-              Browse our collection or sign up to get personalized
-              recommendations.
-            </p>
-            {/* Add your public content here */}
-          </div>
-        )}
-      </div>
+      <>
+        <div
+          style={{
+            backgroundColor: customColors.brand[0],
+            padding: '2rem',
+          }}
+        >
+          <BannerShopPage />
+        </div>
+
+        <div
+          style={{
+            backgroundColor: customColors.neutral[0],
+            //minHeight: '100vh',
+          }}
+        >
+          <QuickFilters />
+        </div>
+
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            minHeight: '60vh',
+          }}
+        >
+          <OutstandingProducts />
+        </div>
+
+        <div>More content here</div>
+      </>
     );
   };
 
