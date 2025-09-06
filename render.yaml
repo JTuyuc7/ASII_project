@@ -1,0 +1,13 @@
+# Render Blueprint for Next.js App
+services:
+- type: web
+  name: asii-project
+  runtime: node
+  buildCommand: npm ci && npm run build
+  startCommand: npm start
+  healthCheckPath: /
+  envVars:
+  - key: NODE_VERSION
+    value: "18"
+  - key: NODE_ENV
+    value: production
