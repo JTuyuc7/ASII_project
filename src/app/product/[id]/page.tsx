@@ -36,12 +36,12 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ProductDetailProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Mock product data - in real app this would come from an API
@@ -110,10 +110,28 @@ El motor ha sido probado y funciona perfectamente. Incluye todos los accesorios 
 
 export default function ProductDetail({ params }: ProductDetailProps) {
   const router = useRouter();
-  const product = getProductById(params.id);
+  const [productId, setProductId] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+
+  // Handle async params
+  useEffect(() => {
+    params.then(resolvedParams => {
+      setProductId(resolvedParams.id);
+    });
+  }, [params]);
+
+  const product = getProductById(productId);
+
+  // Show loading state while params are being resolved
+  if (!productId) {
+    return (
+      <Container size="xl" py="md">
+        <Text>Cargando...</Text>
+      </Container>
+    );
+  }
 
   const breadcrumbItems = [
     { title: 'Inicio', href: '/' },
