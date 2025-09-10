@@ -1,4 +1,4 @@
-import Header from '@/app/components/header/page';
+import Header from '@/components/header/page';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ColorSchemeScript, ThemeProvider } from '@/theme/ThemeProvider';
 import type { Metadata } from 'next';

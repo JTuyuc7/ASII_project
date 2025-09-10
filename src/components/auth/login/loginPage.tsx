@@ -16,7 +16,7 @@ import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { z } from 'zod';
-import { loginAction } from '../../../auth/login/actions';
+import { loginAction } from '../../../app/auth/login/actions';
 
 type LoginFormData = {
   email: string;

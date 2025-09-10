@@ -16,7 +16,7 @@ import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { z } from 'zod';
-import { registerAction } from '../../../auth/register/actions';
+import { registerAction } from '../../../app/auth/register/actions';
 
 type registerSchema = {
   firstName: string;
