@@ -1,12 +1,15 @@
 'use client';
 // import { RegisterForm } from '@/app/auth/register/RegisterForm'
 import { useAuth } from '@/contexts/AuthContext';
+import LoginPage from '../../components/auth/login/loginPage';
+import { RegisterForm } from '../../components/auth/register/registerPage';
+import BannerShopPage from '../../components/banner-shop/page';
+import CloseProducts from '../../components/close-products/page';
+import Footer from '../../components/footer/page';
+import OutstandingProducts from '../../components/outstanding-products/page';
+import QuickFilters from '../../components/quick-filters/page';
+import SellBanner from '../../components/sell-banner/page';
 import { customColors } from '../../theme';
-import LoginPage from '../components/auth/login/loginPage';
-import { RegisterForm } from '../components/auth/register/registerPage';
-import BannerShopPage from '../components/banner-shop/page';
-import OutstandingProducts from '../components/outstanding-products/page';
-import QuickFilters from '../components/quick-filters/page';
 import MainLayout from './layout';
 
 export default function MainPage() {
@@ -72,7 +75,18 @@ export default function MainPage() {
           <OutstandingProducts />
         </div>
 
-        <div>More content here</div>
+        <div
+          style={{
+            backgroundColor: customColors.neutral[1],
+            padding: '2rem 0',
+          }}
+        >
+          <CloseProducts />
+        </div>
+
+        <SellBanner />
+
+        <Footer />
       </>
     );
   };

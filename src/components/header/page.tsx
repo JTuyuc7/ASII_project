@@ -13,7 +13,7 @@ import {
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconMenu2, IconSearch, IconShoppingCart } from '@tabler/icons-react';
 import { useState } from 'react';
-import AuthModal, { AuthModalType } from '../../../components/AuthModal';
+import AuthModal, { AuthModalType } from '../AuthModal';
 // import { useAuth } from '../../../contexts/AuthContext';
 import DesktopDrawer from './sub-components/DesktopDrawer';
 import MenuItemList from './sub-components/MenuIcons';
