@@ -1,5 +1,6 @@
 import Header from '@/components/header/page';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CartProvider } from '@/contexts/CartContext';
 import { ColorSchemeScript, ThemeProvider } from '@/theme/ThemeProvider';
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
@@ -39,8 +40,10 @@ export default function RootLayout({
       <body className={`${montserrat.variable}`} suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
-            <Header />
-            <main>{children}</main>
+            <CartProvider>
+              <Header />
+              <main>{children}</main>
+            </CartProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

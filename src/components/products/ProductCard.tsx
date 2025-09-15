@@ -1,5 +1,6 @@
 'use client';
 
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { calculateDistanceFromUser, Coordinates } from '@/utils/location';
 import {
   Badge,
@@ -14,8 +15,7 @@ import {
 import {
   IconHeart,
   IconMapPin,
-  IconShoppingCart,
-  IconStar,
+  IconStar
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -201,8 +201,8 @@ export default function ProductCard({
             {isCalculating
               ? 'Calculando...'
               : calculatedDistance ||
-                product.distance ||
-                'Distancia no disponible'}
+              product.distance ||
+              'Distancia no disponible'}
           </Text>
         </Group>
 
@@ -229,16 +229,18 @@ export default function ProductCard({
 
         {/* Actions */}
         <Group gap="xs" mt="md">
-          <Button
-            variant="filled"
-            color="brand.9"
+          <AddToCartButton
+            product={{
+              id: product.id.toString(),
+              name: product.name,
+              price: parseFloat(product.price.replace(/[$,]/g, '')),
+              image: product.image,
+              description: `${product.condition} - ${product.seller}`,
+              category: 'Auto Partes',
+            }}
             size="sm"
-            style={{ flex: 1 }}
-            leftSection={<IconShoppingCart size={16} />}
-            onClick={handleAddToCart}
-          >
-            Agregar
-          </Button>
+            fullWidth
+          />
           <Button
             variant="outline"
             color="brand.9"
