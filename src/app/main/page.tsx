@@ -48,7 +48,7 @@ export default function MainPage() {
 
     return (
       <>
-        {/* Demo del carrito - Solo para desarrollo */}
+        {/* TODO: remove it later*/}
         {/* <Container size="lg" py="md">
           <Alert
             icon={<IconInfoCircle size={16} />}
