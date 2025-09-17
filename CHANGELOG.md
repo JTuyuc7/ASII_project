@@ -4,11 +4,11 @@
 
 ### Merged PRs
 
-- #11 feat: adding changelog file — @JTuyuc7
+- #12 chore(changelog): update changelog (PR #11) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
@@ -41,11 +41,11 @@
 
 ### Merged PRs
 
-- #11 feat: adding changelog file — @JTuyuc7
+- #12 chore(changelog): update changelog (PR #11) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
