@@ -1,40 +1,74 @@
-name: Generate Changelog
+name: Update Changelog on merge to master
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [master]
-  workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   changelog:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      
-      - name: Install conventional-changelog
-        run: npm install -g conventional-changelog-cli
-      
-      - name: Configure Git
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 18 }
+
+      # (opcional) si usas Conventional Commits
+      - run: npm i -D conventional-changelog-cli
+
+      # Aquí puedes tomar datos del PR mergeado:
+      - name: Get PR context
+        id: pr
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      
-      - name: Generate Changelog
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "author=@${{ github.event.pull_request.user.login }}" >> $GITHUB_OUTPUT
+          echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "merge_sha=${{ github.event.pull_request.merge_commit_sha }}" >> $GITHUB_OUTPUT
+
+      # Genera notas (opcional)
+      - name: Generate notes (optional)
         run: |
-          conventional-changelog -p angular -i CHANGELOG.md -s
-          git add CHANGELOG.md
-          git diff --staged --quiet || git commit -m "docs: update changelog"
-          git push
+          npx conventional-changelog -p angular -r 0 > .changelog.tmp || true
+          [ -s .changelog.tmp ] || echo "" > .changelog.tmp
+
+      # Prepara el bloque con PR + autor
+      - name: Prepare changelog block
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          {
+            echo "# Changelog"
+            echo
+            echo "## ${DATE}"
+            echo
+            echo "### Merged PRs"
+            echo
+            echo "- #${{ steps.pr.outputs.number }} ${{ steps.pr.outputs.title }} — ${{ steps.pr.outputs.author }}"
+            echo
+            echo "### Contributors"
+            echo
+            echo "- ${{ steps.pr.outputs.author }}"
+            echo
+            echo "### Commits (Conventional Summary)"
+            echo
+            cat .changelog.tmp
+            echo
+            # Añade el contenido anterior si existe
+            if [ -f CHANGELOG.md ]; then tail -n +2 CHANGELOG.md; fi
+          } > CHANGELOG.md
+
+      # Crea PR para actualizar CHANGELOG.md (no push directo a master)
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(changelog): update after PR #${{ steps.pr.outputs.number }}"
+          title: "chore(changelog): update changelog (PR #${{ steps.pr.outputs.number }})"
+          body: "Auto-generated changelog for PR #${{ steps.pr.outputs.number }} (${{ steps.pr.outputs.merge_sha }})"
+          branch: chore/update-changelog-${{ steps.pr.outputs.number }}
+          base: master
+          labels: "chore,release"
