@@ -129,7 +129,6 @@ export default function ProductCard({
             )}
           </Box>
 
-          {/* Favorite Button */}
           <Box
             style={{
               position: 'absolute',
