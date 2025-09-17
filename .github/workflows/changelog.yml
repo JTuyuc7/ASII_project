@@ -1,0 +1,27 @@
+name: Generate Changelog
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate Changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: 'CHANGELOG.md'
+          release-count: '10'
+          version-file: 'package.json'
+          version-path: 'version'
+          create-summary: 'true'

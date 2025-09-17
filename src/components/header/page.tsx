@@ -1,6 +1,5 @@
 'use client';
 
-import { useCart } from '@/contexts/CartContext';
 import {
   ActionIcon,
   Box,
@@ -8,7 +7,7 @@ import {
   Group,
   Paper,
   Text,
-  TextInput
+  TextInput,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconMenu2, IconSearch } from '@tabler/icons-react';
@@ -27,7 +26,6 @@ export default function Header() {
   const [authOpened, { close: closeAuth }] = useDisclosure(false);
   const [authType] = useState<AuthModalType>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { state } = useCart();
   // const { isAuthenticated, loading, logout } = useAuth();
 
   const userName = 'Juan Pérez'; // Replace with actual user name
@@ -117,12 +115,12 @@ export default function Header() {
       <MobileDrawer
         opened={opened}
         onClose={close}
-      // isLoggedIn={isAuthenticated}
-      // userName={userName}
-      // cartItems={cartItems}
-      // logout={logout}
-      // onOpenAuth={handleOpenAuth}
-      // userName={userName}
+        // isLoggedIn={isAuthenticated}
+        // userName={userName}
+        // cartItems={cartItems}
+        // logout={logout}
+        // onOpenAuth={handleOpenAuth}
+        // userName={userName}
       />
 
       {/* Cart Sidebar - Now using context */}

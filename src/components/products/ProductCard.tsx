@@ -1,6 +1,5 @@
 'use client';
 
-import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { calculateDistanceFromUser, Coordinates } from '@/utils/location';
 import {
   Badge,
@@ -12,13 +11,10 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import {
-  IconHeart,
-  IconMapPin,
-  IconStar
-} from '@tabler/icons-react';
+import { IconHeart, IconMapPin, IconStar } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { AddToCartButton } from '../cart/AddToCartButton';
 
 export interface Product {
   id: number;
@@ -45,7 +41,6 @@ interface ProductCardProps {
 
 export default function ProductCard({
   product,
-  onAddToCart,
   onToggleFavorite,
 }: ProductCardProps) {
   const router = useRouter();
@@ -77,11 +72,6 @@ export default function ProductCard({
     router.push(`/product/${product.id}`);
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onAddToCart?.(product.id);
-  };
-
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleFavorite?.(product.id);
@@ -98,7 +88,7 @@ export default function ProductCard({
         transition: 'all 0.2s ease',
         height: '100%',
       }}
-      onClick={handleProductClick}
+      // onClick={handleProductClick}
       styles={{
         root: {
           '&:hover': {
@@ -201,8 +191,8 @@ export default function ProductCard({
             {isCalculating
               ? 'Calculando...'
               : calculatedDistance ||
-              product.distance ||
-              'Distancia no disponible'}
+                product.distance ||
+                'Distancia no disponible'}
           </Text>
         </Group>
 
@@ -250,7 +240,7 @@ export default function ProductCard({
               handleProductClick();
             }}
           >
-            Ver
+            Ver Detalles
           </Button>
         </Group>
       </Stack>

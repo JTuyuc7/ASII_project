@@ -152,14 +152,17 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   ));
 
   const handleAddToCart = () => {
+    // tslint:disable-next-line no-console
     console.log('Added to cart:', { productId: product.id, quantity });
   };
 
   const handleBuyNow = () => {
+    // tslint:disable-next-line no-console
     console.log('Buy now:', { productId: product.id, quantity });
   };
 
   const handleContactSeller = () => {
+    // tslint:disable-next-line no-console
     console.log('Contact seller:', product.seller.name);
   };
 

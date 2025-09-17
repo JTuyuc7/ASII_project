@@ -80,11 +80,13 @@ const outstandingProducts: Product[] = [
 
 export default function OutstandingProducts() {
   const handleAddToCart = (productId: number) => {
+    // tslint:disable-next-line no-console
     console.log('Added to cart:', productId);
     // Add cart logic here
   };
 
   const handleToggleFavorite = (productId: number) => {
+    // tslint:disable-next-line no-console
     console.log('Toggle favorite:', productId);
     // Add favorite logic here
   };

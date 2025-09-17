@@ -1,7 +1,6 @@
 'use client';
 // import { RegisterForm } from '@/app/auth/register/RegisterForm'
 import { useAuth } from '@/contexts/AuthContext';
-import { useSampleData } from '@/hooks/useSampleData';
 import LoginPage from '../../components/auth/login/loginPage';
 import { RegisterForm } from '../../components/auth/register/registerPage';
 import BannerShopPage from '../../components/banner-shop/page';
@@ -15,7 +14,6 @@ import MainLayout from './layout';
 
 export default function MainPage() {
   const { currentView, isAuthenticated } = useAuth();
-  const { addSampleProducts, cartState } = useSampleData();
 
   const renderContent = () => {
     if (currentView === 'login' && !isAuthenticated) {
