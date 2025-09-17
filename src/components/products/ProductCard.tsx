@@ -11,14 +11,10 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import {
-  IconHeart,
-  IconMapPin,
-  IconShoppingCart,
-  IconStar,
-} from '@tabler/icons-react';
+import { IconHeart, IconMapPin, IconStar } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { AddToCartButton } from '../cart/AddToCartButton';
 
 export interface Product {
   id: number;
@@ -45,7 +41,6 @@ interface ProductCardProps {
 
 export default function ProductCard({
   product,
-  onAddToCart,
   onToggleFavorite,
 }: ProductCardProps) {
   const router = useRouter();
@@ -77,11 +72,6 @@ export default function ProductCard({
     router.push(`/product/${product.id}`);
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onAddToCart?.(product.id);
-  };
-
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleFavorite?.(product.id);
@@ -98,7 +88,7 @@ export default function ProductCard({
         transition: 'all 0.2s ease',
         height: '100%',
       }}
-      onClick={handleProductClick}
+      // onClick={handleProductClick}
       styles={{
         root: {
           '&:hover': {
@@ -229,16 +219,18 @@ export default function ProductCard({
 
         {/* Actions */}
         <Group gap="xs" mt="md">
-          <Button
-            variant="filled"
-            color="brand.9"
+          <AddToCartButton
+            product={{
+              id: product.id.toString(),
+              name: product.name,
+              price: parseFloat(product.price.replace(/[$,]/g, '')),
+              image: product.image,
+              description: `${product.condition} - ${product.seller}`,
+              category: 'Auto Partes',
+            }}
             size="sm"
-            style={{ flex: 1 }}
-            leftSection={<IconShoppingCart size={16} />}
-            onClick={handleAddToCart}
-          >
-            Agregar
-          </Button>
+            fullWidth
+          />
           <Button
             variant="outline"
             color="brand.9"
@@ -248,7 +240,7 @@ export default function ProductCard({
               handleProductClick();
             }}
           >
-            Ver
+            Ver Detalles
           </Button>
         </Group>
       </Stack>

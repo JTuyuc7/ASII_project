@@ -1,5 +1,6 @@
 'use client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import {
   Badge,
   Box,
@@ -16,6 +17,7 @@ import {
   IconLogout,
   IconPackage,
   IconSettings,
+  IconShoppingCart,
   IconUserCircle,
 } from '@tabler/icons-react';
 
@@ -26,6 +28,7 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
   const { isAuthenticated, logout, setCurrentView } = useAuth();
+  const { state, toggleCart } = useCart();
 
   const handleLoginClick = () => {
     setCurrentView('login');
@@ -45,6 +48,18 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
   const handleLogout = () => {
     logout();
     onClose();
+  };
+
+  const handleCartClick = () => {
+    toggleCart();
+    onClose();
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('es-GT', {
+      style: 'currency',
+      currency: 'GTQ',
+    }).format(price);
   };
 
   return (
@@ -70,29 +85,61 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
               Carrito de Compras
             </Text>
             <Badge variant="filled" color="brand.9" size="sm">
-              {/* {cartItems.length} items */}0 items
+              {state.itemCount} productos
             </Badge>
           </Group>
 
           <Stack gap="xs">
-            {/* {cartItems.map((item) => (
-              <Box key={item.id} p="xs" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                <Group justify="space-between" gap="xs">
-                  <Box style={{ flex: 1 }}>
-                    <Text size="sm" fw={500}>{item.name}</Text>
-                    <Text size="xs" c="dimmed">Cantidad: {item.quantity}</Text>
+            {state.items.length > 0 ? (
+              <>
+                {state.items.slice(0, 3).map((item) => (
+                  <Box
+                    key={item.id}
+                    p="xs"
+                    style={{
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '8px'
+                    }}
+                  >
+                    <Group justify="space-between" gap="xs">
+                      <Box style={{ flex: 1 }}>
+                        <Text size="sm" fw={500}>{item.name}</Text>
+                        <Text size="xs" c="dimmed">Cantidad: {item.quantity}</Text>
+                      </Box>
+                      <Text size="sm" fw={600} c="brand.9">
+                        {formatPrice(item.price * item.quantity)}
+                      </Text>
+                    </Group>
                   </Box>
-                  <Text size="sm" fw={600} c="brand.9">{item.price}</Text>
+                ))}
+                {state.items.length > 3 && (
+                  <Text size="xs" c="dimmed" ta="center">
+                    Y {state.items.length - 3} productos más...
+                  </Text>
+                )}
+                <Group justify="space-between" mt="xs">
+                  <Text size="sm" fw={600}>Total:</Text>
+                  <Text size="sm" fw={700} c="brand.9">
+                    {formatPrice(state.total)}
+                  </Text>
                 </Group>
-              </Box>
-            ))} */}
-
-            <Text size="sm" c="dimmed">
-              Tu carrito está vacío
-            </Text>
+              </>
+            ) : (
+              <Text size="sm" c="dimmed">
+                Tu carrito está vacío
+              </Text>
+            )}
           </Stack>
 
-          <Button fullWidth mt="md" color="brand.9" variant="filled">
+          <Button
+            fullWidth
+            mt="md"
+            color="brand.9"
+            variant="filled"
+            leftSection={<IconShoppingCart size={18} />}
+            onClick={handleCartClick}
+            disabled={state.items.length === 0}
+          >
             Ver Carrito
           </Button>
         </Box>

@@ -140,7 +140,7 @@ export default function DesktopDrawer({
                     Proceder al Pago
                   </Button>
                   <Button fullWidth size="md" variant="outline" color="brand.9">
-                    Ver Carrito Completo
+                    Ver Carrito Completo 11
                   </Button>
                 </Stack>
               </Box>

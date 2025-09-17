@@ -48,6 +48,35 @@ export default function MainPage() {
 
     return (
       <>
+        {/* Demo del carrito - Solo para desarrollo */}
+        {/* <Container size="lg" py="md">
+          <Alert
+            icon={<IconInfoCircle size={16} />}
+            title="Demo del Carrito"
+            color="blue"
+            variant="light"
+          >
+            <Stack gap="sm">
+              <Text size="sm">
+                Este es un demo del sistema de carrito. Haz clic en el botón para agregar productos de ejemplo.
+              </Text>
+              <Group>
+                <Button
+                  size="sm"
+                  color="brand"
+                  leftSection={<IconShoppingCart size={16} />}
+                  onClick={addSampleProducts}
+                >
+                  Agregar productos de ejemplo
+                </Button>
+                <Text size="sm" c="dimmed">
+                  Productos en carrito: {cartState.itemCount}
+                </Text>
+              </Group>
+            </Stack>
+          </Alert>
+        </Container> */}
+
         <div
           style={{
             backgroundColor: customColors.brand[0],

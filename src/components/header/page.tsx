@@ -2,7 +2,6 @@
 
 import {
   ActionIcon,
-  Badge,
   Box,
   Container,
   Group,
@@ -11,11 +10,12 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { IconMenu2, IconSearch, IconShoppingCart } from '@tabler/icons-react';
+import { IconMenu2, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import AuthModal, { AuthModalType } from '../AuthModal';
+import { CartDrawer } from '../cart/CartDrawer';
+import { CartIcon } from '../cart/CartIcon';
 // import { useAuth } from '../../../contexts/AuthContext';
-import DesktopDrawer from './sub-components/DesktopDrawer';
 import MenuItemList from './sub-components/MenuIcons';
 import MobileDrawer from './sub-components/MobileDrawer';
 
@@ -34,12 +34,6 @@ export default function Header() {
   //   setAuthType(type);
   //   openAuth();
   // };
-
-  const cartItems = [
-    { id: 1, name: 'Filtro de aire', price: '$25.00', quantity: 2 },
-    { id: 2, name: 'Pastillas de freno', price: '$45.00', quantity: 1 },
-    { id: 3, name: 'Aceite de motor', price: '$30.00', quantity: 1 },
-  ];
 
   return (
     <>
@@ -107,35 +101,7 @@ export default function Header() {
               // Desktop: Cart and User icons
               <Group gap="sm">
                 {/* Shopping Cart */}
-                <Box style={{ position: 'relative' }}>
-                  <ActionIcon
-                    variant="subtle"
-                    size="xl"
-                    color="brand.9"
-                    radius="md"
-                    onClick={openCart}
-                  >
-                    <IconShoppingCart size={35} />
-                  </ActionIcon>
-                  <Badge
-                    size="xs"
-                    variant="filled"
-                    color="brand.9"
-                    style={{
-                      position: 'absolute',
-                      top: -2,
-                      right: -2,
-                      minWidth: 18,
-                      height: 18,
-                      padding: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    3
-                  </Badge>
-                </Box>
+                <CartIcon onClick={openCart} />
 
                 {/* User Menu */}
                 <MenuItemList userName={userName} />
@@ -157,12 +123,8 @@ export default function Header() {
         // userName={userName}
       />
 
-      {/* Cart Sidebar - Available on both Desktop and Mobile */}
-      <DesktopDrawer
-        cartOpened={cartOpened}
-        closeCart={closeCart}
-        cartItems={cartItems}
-      />
+      {/* Cart Sidebar - Now using context */}
+      <CartDrawer opened={cartOpened} onClose={closeCart} />
 
       {/* Auth Modal */}
       <AuthModal opened={authOpened} onClose={closeAuth} type={authType} />
