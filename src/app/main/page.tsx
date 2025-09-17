@@ -48,7 +48,7 @@ export default function MainPage() {
 
     return (
       <>
-        {/* TODO: remove it later*/}
+        {/* TODO: remove it later. */}
         {/* <Container size="lg" py="md">
           <Alert
             icon={<IconInfoCircle size={16} />}
