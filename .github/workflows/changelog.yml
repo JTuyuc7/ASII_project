@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   changelog:
@@ -20,12 +19,22 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Generate Changelog
-        uses: TriPSs/conventional-changelog-action@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          output-file: 'CHANGELOG.md'
-          release-count: '10'
-          version-file: 'package.json'
-          version-path: 'version'
-          create-summary: 'true'
+          node-version: '18'
+      
+      - name: Install conventional-changelog
+        run: npm install -g conventional-changelog-cli
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Generate Changelog
+        run: |
+          conventional-changelog -p angular -i CHANGELOG.md -s
+          git add CHANGELOG.md
+          git diff --staged --quiet || git commit -m "docs: update changelog"
+          git push
