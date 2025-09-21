@@ -1,10 +1,10 @@
 # Changelog
 
-## 2025-09-17
+## 2025-09-21
 
 ### Merged PRs
 
-- #11 feat: adding changelog file — @JTuyuc7
+- #14 feat: user pages — @JTuyuc7
 
 ### Contributors
 
@@ -12,7 +12,7 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-09-17)
+# 0.1.0 (2025-09-21)
 
 
 ### Features
@@ -32,16 +32,17 @@
 * initialChanges ([6bd1cc4](https://github.com/JTuyuc7/ASII_project/commit/6bd1cc4456f6ac4922cf280bb8972ccf9d443617))
 * login, register pages ([2fe8e06](https://github.com/JTuyuc7/ASII_project/commit/2fe8e06865cb8c0ab2fd62ad21fcb1dcaa34b0f5))
 * navbar and auth context ([ae3d997](https://github.com/JTuyuc7/ASII_project/commit/ae3d9974dd7de8f3739ddaae33a84d7ac6108d74))
+* user pages ([b3dbf65](https://github.com/JTuyuc7/ASII_project/commit/b3dbf65dde7c52f8a692c78185535319191990c4))
 
 
 
 
 
-## 2025-09-17
+## 2025-09-21
 
 ### Merged PRs
 
-- #11 feat: adding changelog file — @JTuyuc7
+- #14 feat: user pages — @JTuyuc7
 
 ### Contributors
 
@@ -49,7 +50,7 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-09-17)
+# 0.1.0 (2025-09-21)
 
 
 ### Features
@@ -69,6 +70,7 @@
 * initialChanges ([6bd1cc4](https://github.com/JTuyuc7/ASII_project/commit/6bd1cc4456f6ac4922cf280bb8972ccf9d443617))
 * login, register pages ([2fe8e06](https://github.com/JTuyuc7/ASII_project/commit/2fe8e06865cb8c0ab2fd62ad21fcb1dcaa34b0f5))
 * navbar and auth context ([ae3d997](https://github.com/JTuyuc7/ASII_project/commit/ae3d9974dd7de8f3739ddaae33a84d7ac6108d74))
+* user pages ([b3dbf65](https://github.com/JTuyuc7/ASII_project/commit/b3dbf65dde7c52f8a692c78185535319191990c4))
 
 
 
