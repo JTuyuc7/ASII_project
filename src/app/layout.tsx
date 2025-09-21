@@ -1,6 +1,8 @@
 import Header from '@/components/header/page';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
+import { SettingsProvider } from '@/contexts/SettingsContext';
+import { UserAccountProvider } from '@/contexts/UserAccountContext';
 import { ColorSchemeScript, ThemeProvider } from '@/theme/ThemeProvider';
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
@@ -13,8 +15,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'E-Commerce App',
-  description: 'Modern e-commerce application built with Next.js and Mantine',
+  title: 'Auto Partes - GT',
+  description:
+    'Tu tienda en línea de autopartes confiable y conveniente. Encuentra una amplia selección de piezas y accesorios para tu vehículo, con envío rápido y seguro. ¡Compra ahora y mantén tu auto en óptimas condiciones!',
 };
 
 export default function RootLayout({
@@ -39,12 +42,16 @@ export default function RootLayout({
       </head>
       <body className={`${montserrat.variable}`} suppressHydrationWarning>
         <ThemeProvider>
-          <AuthProvider>
-            <CartProvider>
-              <Header />
-              <main>{children}</main>
-            </CartProvider>
-          </AuthProvider>
+          <SettingsProvider>
+            <AuthProvider>
+              <UserAccountProvider>
+                <CartProvider>
+                  <Header />
+                  <main>{children}</main>
+                </CartProvider>
+              </UserAccountProvider>
+            </AuthProvider>
+          </SettingsProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -10,6 +10,7 @@ import {
   IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export interface MenuItemListProps {
   // isAuthenticated: boolean;
@@ -20,8 +21,7 @@ export interface MenuItemListProps {
 
 export default function MenuItemList({ userName }: MenuItemListProps) {
   const { setCurrentView, isAuthenticated, logout } = useAuth();
-
-  // const router = useRouter();
+  const router = useRouter();
 
   const handleLoginClick = () => {
     setCurrentView('login');
@@ -29,6 +29,10 @@ export default function MenuItemList({ userName }: MenuItemListProps) {
 
   const handleRegisterClick = () => {
     setCurrentView('register');
+  };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
   };
 
   return (
@@ -45,16 +49,28 @@ export default function MenuItemList({ userName }: MenuItemListProps) {
         {isAuthenticated ? (
           <>
             <Menu.Label>Hola, {userName}</Menu.Label>
-            <Menu.Item leftSection={<IconUserCircle size={14} />}>
+            <Menu.Item
+              leftSection={<IconUserCircle size={14} />}
+              onClick={() => handleNavigation('/account/profile')}
+            >
               Mi Cuenta
             </Menu.Item>
-            <Menu.Item leftSection={<IconPackage size={14} />}>
+            <Menu.Item
+              leftSection={<IconPackage size={14} />}
+              onClick={() => handleNavigation('/account/orders')}
+            >
               Mis Pedidos
             </Menu.Item>
-            <Menu.Item leftSection={<IconHeart size={14} />}>
+            <Menu.Item
+              leftSection={<IconHeart size={14} />}
+              onClick={() => handleNavigation('/account/wishlist')}
+            >
               Lista de Deseos
             </Menu.Item>
-            <Menu.Item leftSection={<IconSettings size={14} />}>
+            <Menu.Item
+              leftSection={<IconSettings size={14} />}
+              onClick={() => handleNavigation('/account/settings')}
+            >
               Configuración
             </Menu.Item>
             <Menu.Divider />

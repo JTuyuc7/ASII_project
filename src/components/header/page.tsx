@@ -16,10 +16,12 @@ import AuthModal, { AuthModalType } from '../AuthModal';
 import { CartDrawer } from '../cart/CartDrawer';
 import { CartIcon } from '../cart/CartIcon';
 // import { useAuth } from '../../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import MenuItemList from './sub-components/MenuIcons';
 import MobileDrawer from './sub-components/MobileDrawer';
 
 export default function Header() {
+  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [cartOpened, { open: openCart, close: closeCart }] =
     useDisclosure(false);
@@ -51,7 +53,17 @@ export default function Header() {
           <Group justify="space-between" h={84} px="md">
             {/* Logo */}
             {!isMobile ? (
-              <Box>
+              <Box
+                component="button"
+                onClick={() => router.push('/')}
+                style={{
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                }}
+              >
                 <Text
                   size="xl"
                   fw={700}
