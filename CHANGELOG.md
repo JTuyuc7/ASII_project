@@ -4,11 +4,11 @@
 
 ### Merged PRs
 
-- #14 feat: user pages — @JTuyuc7
+- #15 chore(changelog): update changelog (PR #14) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
@@ -42,11 +42,11 @@
 
 ### Merged PRs
 
-- #14 feat: user pages — @JTuyuc7
+- #15 chore(changelog): update changelog (PR #14) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
