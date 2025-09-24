@@ -1,10 +1,10 @@
 # Changelog
 
-## 2025-09-21
+## 2025-09-24
 
 ### Merged PRs
 
-- #15 chore(changelog): update changelog (PR #14) — @github-actions[bot]
+- #16 chore(changelog): update changelog (PR #15) — @github-actions[bot]
 
 ### Contributors
 
@@ -12,7 +12,7 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-09-21)
+# 0.1.0 (2025-09-24)
 
 
 ### Features
@@ -21,6 +21,7 @@
 * adding changelog ([4214e80](https://github.com/JTuyuc7/ASII_project/commit/4214e80d0b62f50c67731720acdfb9c9287a0372))
 * adding changelog file ([0c4236d](https://github.com/JTuyuc7/ASII_project/commit/0c4236ddb64340b250c3c7a6c4c77f8ad7855896))
 * deployment app cicd ([e7f389d](https://github.com/JTuyuc7/ASII_project/commit/e7f389d37862beae47382bd9f40cbb285249ae8a))
+* enable build docker app ([ef6ce82](https://github.com/JTuyuc7/ASII_project/commit/ef6ce826463156d28760840a22dd9025717ec3ad))
 * enable cart screens functionality ([6697508](https://github.com/JTuyuc7/ASII_project/commit/66975089909c212cc348fd8cbe63f07331398dfe))
 * enable cart screens functionality ([6019489](https://github.com/JTuyuc7/ASII_project/commit/601948902a4c07b301889263611421634616e4d8))
 * enable cart screens functionality ([146677e](https://github.com/JTuyuc7/ASII_project/commit/146677ea071368219e22adfe8766a8a73121ea30))
@@ -38,11 +39,11 @@
 
 
 
-## 2025-09-21
+## 2025-09-24
 
 ### Merged PRs
 
-- #15 chore(changelog): update changelog (PR #14) — @github-actions[bot]
+- #16 chore(changelog): update changelog (PR #15) — @github-actions[bot]
 
 ### Contributors
 
@@ -50,7 +51,7 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-09-21)
+# 0.1.0 (2025-09-24)
 
 
 ### Features
@@ -59,6 +60,7 @@
 * adding changelog ([4214e80](https://github.com/JTuyuc7/ASII_project/commit/4214e80d0b62f50c67731720acdfb9c9287a0372))
 * adding changelog file ([0c4236d](https://github.com/JTuyuc7/ASII_project/commit/0c4236ddb64340b250c3c7a6c4c77f8ad7855896))
 * deployment app cicd ([e7f389d](https://github.com/JTuyuc7/ASII_project/commit/e7f389d37862beae47382bd9f40cbb285249ae8a))
+* enable build docker app ([ef6ce82](https://github.com/JTuyuc7/ASII_project/commit/ef6ce826463156d28760840a22dd9025717ec3ad))
 * enable cart screens functionality ([6697508](https://github.com/JTuyuc7/ASII_project/commit/66975089909c212cc348fd8cbe63f07331398dfe))
 * enable cart screens functionality ([6019489](https://github.com/JTuyuc7/ASII_project/commit/601948902a4c07b301889263611421634616e4d8))
 * enable cart screens functionality ([146677e](https://github.com/JTuyuc7/ASII_project/commit/146677ea071368219e22adfe8766a8a73121ea30))
