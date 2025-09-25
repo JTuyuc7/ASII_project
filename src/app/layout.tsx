@@ -6,6 +6,7 @@ import { UserAccountProvider } from '@/contexts/UserAccountContext';
 import { ColorSchemeScript, ThemeProvider } from '@/theme/ThemeProvider';
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+
 import './globals.css';
 
 const montserrat = Montserrat({

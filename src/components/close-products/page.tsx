@@ -1,17 +1,10 @@
 'use client';
 
-import {
-  Box,
-  Container,
-  Grid,
-  Group,
-  Paper,
-  Text,
-  Title,
-  rem,
-} from '@mantine/core';
+import { Box, Container, Grid, Group, Text, Title } from '@mantine/core';
 import { IconMapPin, IconTruck, IconUser } from '@tabler/icons-react';
 import { customColors } from '../../theme';
+import MapClient from '../maps';
+export const dynamic = 'force-dynamic';
 
 export default function CloseProducts() {
   return (
@@ -46,7 +39,7 @@ export default function CloseProducts() {
                   stroke={1.5}
                 />
                 <Text size="md" c={customColors.neutral[7]} fw={500}>
-                  123 productos a menos de 10 km
+                  30 productos a menos de 10 km
                 </Text>
               </Group>
 
@@ -76,32 +69,14 @@ export default function CloseProducts() {
             </Box>
           </Box>
         </Grid.Col>
-
-        {/* Right Column - Map */}
         <Grid.Col span={{ base: 12, md: 6 }}>
-          <Paper
-            shadow="sm"
-            radius="lg"
+          <Box
             style={{
-              height: rem(300),
-              backgroundColor: customColors.neutral[2],
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: `1px solid ${customColors.neutral[3]}`,
+              backgroundColor: 'gray',
             }}
           >
-            <Box ta="center">
-              <IconMapPin
-                size={48}
-                color={customColors.neutral[5]}
-                stroke={1}
-              />
-              <Text size="lg" c={customColors.neutral[6]} mt="sm" fw={500}>
-                Mapa de ubicaciones
-              </Text>
-            </Box>
-          </Paper>
+            <MapClient />
+          </Box>
         </Grid.Col>
       </Grid>
     </Container>
