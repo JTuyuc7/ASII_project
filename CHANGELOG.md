@@ -4,11 +4,11 @@
 
 ### Merged PRs
 
-- #20 feat: maps integration — @JTuyuc7
+- #21 chore(changelog): update changelog (PR #20) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
@@ -46,11 +46,11 @@
 
 ### Merged PRs
 
-- #20 feat: maps integration — @JTuyuc7
+- #21 chore(changelog): update changelog (PR #20) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
