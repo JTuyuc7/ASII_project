@@ -101,7 +101,6 @@ export default function MapClient() {
     init();
   }, [center]);
 
-  console.log(containerRef.current, center);
   return (
     <div style={{ position: 'relative', width: '100%', height: '40vh' }}>
       {error && (
