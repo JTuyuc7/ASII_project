@@ -1,4 +1,4 @@
-import './auth/login/login.css';
+// import './auth/login/login.css';
 import MainPage from './main/page';
 
 export default function Home() {

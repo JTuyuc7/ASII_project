@@ -12,8 +12,5 @@
     "typescriptreact"
   ],
   "typescript.preferences.importModuleSpecifier": "relative",
-  "files.exclude": {
-    "node_modules": true,
-    ".next": true
-  }
+  "files.exclude": {}
 }

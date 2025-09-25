@@ -84,7 +84,7 @@ export default function ProductCard({
       radius="md"
       withBorder
       style={{
-        cursor: 'pointer',
+        // cursor: 'pointer',
         transition: 'all 0.2s ease',
         height: '100%',
       }}
@@ -231,6 +231,7 @@ export default function ProductCard({
             fullWidth
           />
           <Button
+            w={'100%'}
             variant="outline"
             color="brand.9"
             size="sm"
