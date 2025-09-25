@@ -8,6 +8,7 @@ let mapboxgl: typeof import('mapbox-gl') | null = null;
 const loadMapbox = async () => {
   if (!mapboxgl) {
     const mod = await import('mapbox-gl');
+    // @ts-expect-error (no typings)
     mapboxgl = mod.default;
   }
   return mapboxgl!;
@@ -50,6 +51,7 @@ export default function MapClient() {
       if (!center || !containerRef.current || mapRef.current) return;
 
       const mb = await loadMapbox();
+      // @ts-expect-error (no typings)
       mb.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
 
       const map = new mb.Map({
