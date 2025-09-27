@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import axiosPublicClient from '../../../config';
 
 const registerSchema = z
   .object({
@@ -32,21 +33,14 @@ export async function registerAction(formData: RegisterFormData) {
     // 7. Redirect user
 
     // For now, we'll simulate a registration process
-    console.log('Registration attempt:', {
-      ...validatedData,
-      password: '[HIDDEN]',
-      confirmPassword: '[HIDDEN]',
+
+    const response = await axiosPublicClient.post('/auth/register', {
+      name: `${validatedData.firstName} ${validatedData.lastName}`,
+      email: validatedData.email,
+      password: validatedData.password,
     });
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Mock validation - replace with real registration logic
-    if (validatedData.email === 'existing@example.com') {
-      return { success: false, error: 'Email already exists' };
-    }
-
-    return { success: true, token: 'mock-jwt-token-456' };
+    return response.data;
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {

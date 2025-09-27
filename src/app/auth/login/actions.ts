@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import axiosPublicClient from '../../../config';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -14,27 +15,12 @@ export async function loginAction(formData: LoginFormData) {
     // Validate the form data
     const validatedData = loginSchema.parse(formData);
 
-    // Here you would typically:
-    // 1. Check credentials against your database
-    // 2. Create session/JWT token
-    // 3. Set cookies
-    // 4. Redirect user
+    const response = await axiosPublicClient.post('/auth/login', {
+      email: validatedData.email,
+      password: validatedData.password,
+    });
 
-    // For now, we'll simulate a login process
-    console.log('Login attempt:', validatedData);
-
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Mock validation - replace with real authentication logic
-    if (
-      validatedData.email === 'admin@example.com' &&
-      validatedData.password === 'password'
-    ) {
-      return { success: true, token: 'mock-jwt-token-123' };
-    } else {
-      return { success: false, error: 'Invalid email or password' };
-    }
+    return response.data;
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
