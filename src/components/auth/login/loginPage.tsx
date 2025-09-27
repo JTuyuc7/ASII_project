@@ -30,7 +30,7 @@ interface LoginFormProps {
 export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { login, setCurrentView } = useAuth();
+  const { login, setCurrentView, setUserSession } = useAuth();
 
   const form = useForm<LoginFormData>({
     initialValues: {
@@ -56,10 +56,9 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
     try {
       const result = await loginAction(values);
 
-      if (result.success && result.token) {
-        login(result.token);
-      } else {
-        setError(result.error || 'Error al iniciar sesión');
+      if (result.token) {
+        setUserSession(result.user); // Set user data in context
+        login(result.token); // Log the user in with the received token
       }
     } catch (err) {
       setError('Error inesperado al iniciar sesión');

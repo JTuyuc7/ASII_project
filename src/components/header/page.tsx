@@ -17,6 +17,7 @@ import { CartDrawer } from '../cart/CartDrawer';
 import { CartIcon } from '../cart/CartIcon';
 // import { useAuth } from '../../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../contexts/AuthContext';
 import MenuItemList from './sub-components/MenuIcons';
 import MobileDrawer from './sub-components/MobileDrawer';
 
@@ -28,9 +29,9 @@ export default function Header() {
   const [authOpened, { close: closeAuth }] = useDisclosure(false);
   const [authType] = useState<AuthModalType>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  // const { isAuthenticated, loading, logout } = useAuth();
+  const { user } = useAuth();
 
-  const userName = 'Juan Pérez'; // Replace with actual user name
+  const userName = user?.name || 'Juan Pérez'; // Replace with actual user name
 
   // const handleOpenAuth = (type: 'login' | 'register') => {
   //   setAuthType(type);
