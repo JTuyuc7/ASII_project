@@ -4,11 +4,11 @@
 
 ### Merged PRs
 
-- #25 enable user login — @JTuyuc7
+- #26 chore(changelog): update changelog (PR #25) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
@@ -47,11 +47,11 @@
 
 ### Merged PRs
 
-- #25 enable user login — @JTuyuc7
+- #26 chore(changelog): update changelog (PR #25) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
