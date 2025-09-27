@@ -46,7 +46,7 @@ interface RegisterFormProps {
 export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { login, setCurrentView } = useAuth();
+  const { login, setCurrentView, setUserSession } = useAuth();
 
   const form = useForm<registerSchema>({
     initialValues: {
@@ -93,11 +93,12 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
 
     try {
       const result = await registerAction(values);
+      console.log(result, 'Result from registerAction');
 
-      if (result.success && result.token) {
-        login(result.token);
-      } else {
-        setError(result.error || 'Error al crear la cuenta');
+      if (result.token) {
+        console.log('from register form');
+        setUserSession(result.user); // Set user data in context
+        login(result.token); // Log the user in with the received token
       }
     } catch (err) {
       setError('Error inesperado al crear la cuenta');
