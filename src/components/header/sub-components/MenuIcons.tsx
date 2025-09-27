@@ -7,6 +7,7 @@ import {
   IconLogout,
   IconPackage,
   IconSettings,
+  IconShield,
   IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
@@ -20,7 +21,7 @@ export interface MenuItemListProps {
 }
 
 export default function MenuItemList({ userName }: MenuItemListProps) {
-  const { setCurrentView, isAuthenticated, logout } = useAuth();
+  const { setCurrentView, isAuthenticated, isAdmin, logout } = useAuth();
   const router = useRouter();
 
   const handleLoginClick = () => {
@@ -73,6 +74,18 @@ export default function MenuItemList({ userName }: MenuItemListProps) {
             >
               Configuración
             </Menu.Item>
+            {isAdmin && (
+              <>
+                <Menu.Divider />
+                <Menu.Item
+                  leftSection={<IconShield size={14} />}
+                  onClick={() => handleNavigation('/admin')}
+                  color="orange"
+                >
+                  Panel de Admin
+                </Menu.Item>
+              </>
+            )}
             <Menu.Divider />
             <Menu.Item
               leftSection={<IconLogout size={14} />}
