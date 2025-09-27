@@ -4,6 +4,7 @@
 
 ### Merged PRs
 
+- #23 feat: admin view — @JTuyuc7
 - #25 enable user login — @JTuyuc7
 
 ### Contributors
@@ -47,6 +48,7 @@
 
 ### Merged PRs
 
+- #23 feat: admin view — @JTuyuc7
 - #25 enable user login — @JTuyuc7
 
 ### Contributors
