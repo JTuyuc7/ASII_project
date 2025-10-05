@@ -4,11 +4,11 @@
 
 ### Merged PRs
 
-- #29 feat: enale suppliers — @JTuyuc7
+- #30 chore(changelog): update changelog (PR #29) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
@@ -48,11 +48,11 @@
 
 ### Merged PRs
 
-- #29 feat: enale suppliers — @JTuyuc7
+- #30 chore(changelog): update changelog (PR #29) — @github-actions[bot]
 
 ### Contributors
 
-- @JTuyuc7
+- @github-actions[bot]
 
 ### Commits (Conventional Summary)
 
