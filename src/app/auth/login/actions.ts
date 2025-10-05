@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import axiosPublicClient from '../../../config';
+import { axiosPublicClient } from '@/config';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),

@@ -24,7 +24,7 @@ export default function MapClient() {
   const [error, setError] = useState<string | null>(null);
 
   // Fallback: Ciudad de Guatemala
-  const fallback: LatLng = { lat: 14.6349, lng: -90.5069 };
+  const fallback: LatLng = { lat: 14.556043, lng: -90.73313 };
 
   // 1) Obtener ubicación del usuario
   useEffect(() => {
