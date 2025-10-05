@@ -17,7 +17,6 @@ import {
   Switch,
   Tabs,
   Text,
-  Title,
 } from '@mantine/core';
 import {
   IconBell,
@@ -27,9 +26,10 @@ import {
   IconPalette,
   IconSettings,
   IconShield,
-  IconTrash,
+  IconShoppingCartCheck,
 } from '@tabler/icons-react';
 import { useState } from 'react';
+import SupplierRegistrationPage from '@/components/supplier/page';
 
 export default function SettingsPage() {
   const {
@@ -92,8 +92,8 @@ export default function SettingsPage() {
         'success',
         'Configuraciones restablecidas a valores por defecto'
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.log(error, 'error in catch');
       showNotification('error', 'Error al restablecer configuraciones');
     } finally {
       setResetting(false);
@@ -126,17 +126,17 @@ export default function SettingsPage() {
         </Box>
       )}
 
-      <Group justify="space-between" mb="xl">
-        <Title order={1}>Configuración</Title>
-        <Button
-          variant="outline"
-          color="red"
-          leftSection={<IconTrash size={16} />}
-          onClick={() => setResetModalOpen(true)}
-        >
-          Restablecer
-        </Button>
-      </Group>
+      {/*<Group justify="space-between" mb="xl">*/}
+      {/*  <Title order={1}>Configuración</Title>*/}
+      {/*  <Button*/}
+      {/*    variant="outline"*/}
+      {/*    color="red"*/}
+      {/*    leftSection={<IconTrash size={16} />}*/}
+      {/*    onClick={() => setResetModalOpen(true)}*/}
+      {/*  >*/}
+      {/*    Restablecer*/}
+      {/*  </Button>*/}
+      {/*</Group>*/}
 
       <Tabs defaultValue="general" orientation="vertical">
         <Tabs.List>
@@ -151,6 +151,12 @@ export default function SettingsPage() {
           </Tabs.Tab>
           <Tabs.Tab value="appearance" leftSection={<IconPalette size={16} />}>
             Apariencia
+          </Tabs.Tab>
+          <Tabs.Tab
+            value="prov"
+            leftSection={<IconShoppingCartCheck size={16} />}
+          >
+            Convertirme en Proveedor
           </Tabs.Tab>
         </Tabs.List>
 
@@ -413,6 +419,10 @@ export default function SettingsPage() {
               </Group>
             </Paper>
           </Stack>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="prov" pl="md">
+          <SupplierRegistrationPage />
         </Tabs.Panel>
       </Tabs>
 
