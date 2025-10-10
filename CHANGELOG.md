@@ -1,10 +1,10 @@
 # Changelog
 
-## 2025-10-05
+## 2025-10-10
 
 ### Merged PRs
 
-- #29 feat: enale suppliers — @JTuyuc7
+- #32 feat: add products — @JTuyuc7
 
 ### Contributors
 
@@ -12,11 +12,13 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-10-05)
+# 0.1.0 (2025-10-10)
 
 
 ### Features
 
+* add products ([35dacae](https://github.com/JTuyuc7/ASII_project/commit/35dacaed2f5e1ae7d2724257da492f362fb69361))
+* add products ([052a4bf](https://github.com/JTuyuc7/ASII_project/commit/052a4bf3b03d3c9da20a0b668312d82a933dda04))
 * adding changelog ([9d9fecc](https://github.com/JTuyuc7/ASII_project/commit/9d9feccbd5ae171fc4abff35ccc1e423510069e0))
 * adding changelog ([4214e80](https://github.com/JTuyuc7/ASII_project/commit/4214e80d0b62f50c67731720acdfb9c9287a0372))
 * adding changelog file ([0c4236d](https://github.com/JTuyuc7/ASII_project/commit/0c4236ddb64340b250c3c7a6c4c77f8ad7855896))
@@ -44,11 +46,11 @@
 
 
 
-## 2025-10-05
+## 2025-10-10
 
 ### Merged PRs
 
-- #29 feat: enale suppliers — @JTuyuc7
+- #32 feat: add products — @JTuyuc7
 
 ### Contributors
 
@@ -56,11 +58,13 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-10-05)
+# 0.1.0 (2025-10-10)
 
 
 ### Features
 
+* add products ([35dacae](https://github.com/JTuyuc7/ASII_project/commit/35dacaed2f5e1ae7d2724257da492f362fb69361))
+* add products ([052a4bf](https://github.com/JTuyuc7/ASII_project/commit/052a4bf3b03d3c9da20a0b668312d82a933dda04))
 * adding changelog ([9d9fecc](https://github.com/JTuyuc7/ASII_project/commit/9d9feccbd5ae171fc4abff35ccc1e423510069e0))
 * adding changelog ([4214e80](https://github.com/JTuyuc7/ASII_project/commit/4214e80d0b62f50c67731720acdfb9c9287a0372))
 * adding changelog file ([0c4236d](https://github.com/JTuyuc7/ASII_project/commit/0c4236ddb64340b250c3c7a6c4c77f8ad7855896))
