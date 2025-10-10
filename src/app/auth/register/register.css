@@ -1,5 +1,0 @@
-/* Inherit other styles from login.css */
-@import '../login/login.css';
-
-/* Register page uses the same cool blue glow effect from login.css */
-/* No additional overrides needed - the imported styles will apply */

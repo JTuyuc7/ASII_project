@@ -1,4 +1,5 @@
 import Header from '@/components/header/page';
+import RouteTracker from '@/components/RouteTracker';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
@@ -47,6 +48,7 @@ export default function RootLayout({
             <AuthProvider>
               <UserAccountProvider>
                 <CartProvider>
+                  <RouteTracker />
                   <Header />
                   <main>{children}</main>
                 </CartProvider>

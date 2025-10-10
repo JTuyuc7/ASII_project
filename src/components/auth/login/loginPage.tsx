@@ -30,7 +30,7 @@ interface LoginFormProps {
 export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { login, setCurrentView, setUserSession } = useAuth();
+  const { login, setCurrentView, setUserSession, getLastRoute } = useAuth();
 
   const form = useForm<LoginFormData>({
     initialValues: {
@@ -58,7 +58,13 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
 
       if (result.token) {
         setUserSession(result.user); // Set user data in context
-        login(result.token); // Log the user in with the received token
+
+        // Get the last visited route and redirect there after login
+        const lastRoute = getLastRoute();
+        const redirectTo =
+          lastRoute && !lastRoute.includes('/auth/') ? lastRoute : '/main';
+
+        login(result.token, 'user', redirectTo); // Log the user in with the received token
       }
     } catch (err) {
       setError('Error inesperado al iniciar sesión');

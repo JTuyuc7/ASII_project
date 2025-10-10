@@ -1,4 +1,5 @@
 'use client';
+import SupplierRegistrationPage from '@/components/supplier/page';
 import { AppSettings, useSettings } from '@/contexts/SettingsContext';
 import {
   Badge,
@@ -26,10 +27,12 @@ import {
   IconPalette,
   IconSettings,
   IconShield,
+  IconShoppingBag,
   IconShoppingCartCheck,
 } from '@tabler/icons-react';
 import { useState } from 'react';
-import SupplierRegistrationPage from '@/components/supplier/page';
+import SellProductForm from '../../../components/products/productForm/ProductForm';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export default function SettingsPage() {
   const {
@@ -40,6 +43,8 @@ export default function SettingsPage() {
     resetSettings,
     isLoading,
   } = useSettings();
+  const { user } = useAuth();
+  console.log(user.role, 'datos del usuario');
   const [notification, setNotification] = useState<{
     type: 'success' | 'error';
     message: string;
@@ -152,12 +157,20 @@ export default function SettingsPage() {
           <Tabs.Tab value="appearance" leftSection={<IconPalette size={16} />}>
             Apariencia
           </Tabs.Tab>
-          <Tabs.Tab
-            value="prov"
-            leftSection={<IconShoppingCartCheck size={16} />}
-          >
-            Convertirme en Proveedor
-          </Tabs.Tab>
+          {user?.role === 'USUARIO' && (
+            <Tabs.Tab
+              value="prov"
+              leftSection={<IconShoppingCartCheck size={16} />}
+            >
+              Convertirme en Proveedor
+            </Tabs.Tab>
+          )}
+
+          {user?.role === 'PROVEEDOR' && (
+            <Tabs.Tab value="sell" leftSection={<IconShoppingBag size={16} />}>
+              Agregar un producto
+            </Tabs.Tab>
+          )}
         </Tabs.List>
 
         <Tabs.Panel value="general" pl="md">
@@ -423,6 +436,10 @@ export default function SettingsPage() {
 
         <Tabs.Panel value="prov" pl="md">
           <SupplierRegistrationPage />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="sell" pl="md">
+          <SellProductForm />
         </Tabs.Panel>
       </Tabs>
 
