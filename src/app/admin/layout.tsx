@@ -28,15 +28,27 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, isAdmin, loading, saveCurrentRoute } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    // Save current route when navigating within admin pages
+    if (pathname && isAuthenticated && isAdmin) {
+      saveCurrentRoute(pathname);
+    }
+  }, [pathname, isAuthenticated, isAdmin, saveCurrentRoute]);
+
+  useEffect(() => {
     if (!loading && (!isAuthenticated || !isAdmin)) {
+      // Save the route the user tried to access
+      if (pathname && isAuthenticated) {
+        saveCurrentRoute(pathname);
+      }
+      // Redirect to main page (/) which will show login or home depending on auth
       router.push('/');
     }
-  }, [isAuthenticated, isAdmin, loading, router]);
+  }, [isAuthenticated, isAdmin, loading, router, pathname, saveCurrentRoute]);
 
   if (loading) {
     return <div>Cargando...</div>;

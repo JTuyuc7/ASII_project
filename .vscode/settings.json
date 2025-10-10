@@ -12,5 +12,10 @@
     "typescriptreact"
   ],
   "typescript.preferences.importModuleSpecifier": "relative",
-  "files.exclude": {}
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true
+  }
 }

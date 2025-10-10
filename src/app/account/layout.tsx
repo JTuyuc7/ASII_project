@@ -1,7 +1,7 @@
 'use client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Box, Button, Container, Text, Title } from '@mantine/core';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function AccountLayout({
@@ -9,14 +9,32 @@ export default function AccountLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading, saveCurrentRoute } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login');
+    // Save current route when navigating within account pages
+    if (pathname && isAuthenticated) {
+      saveCurrentRoute(pathname);
     }
-  }, [isAuthenticated, router]);
+  }, [pathname, isAuthenticated, saveCurrentRoute]);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      // Save the route the user tried to access
+      if (pathname) {
+        saveCurrentRoute(pathname);
+      }
+      // Redirect to main page which will show login
+      router.push('/');
+    }
+  }, [isAuthenticated, loading, router, pathname, saveCurrentRoute]);
+
+  // Show nothing while checking auth
+  if (loading) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     return (
@@ -28,9 +46,7 @@ export default function AccountLayout({
           <Text mb="lg">
             Necesitas iniciar sesión para acceder a esta página.
           </Text>
-          <Button onClick={() => router.push('/auth/login')}>
-            Iniciar Sesión
-          </Button>
+          <Button onClick={() => router.push('/')}>Iniciar Sesión</Button>
         </Box>
       </Container>
     );
