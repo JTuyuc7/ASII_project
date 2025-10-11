@@ -2,6 +2,7 @@ import Header from '@/components/header/page';
 import RouteTracker from '@/components/RouteTracker';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
+import { LocationProvider } from '@/contexts/LocationContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import { UserAccountProvider } from '@/contexts/UserAccountContext';
 import { ColorSchemeScript, ThemeProvider } from '@/theme/ThemeProvider';
@@ -45,15 +46,17 @@ export default function RootLayout({
       <body className={`${montserrat.variable}`} suppressHydrationWarning>
         <ThemeProvider>
           <SettingsProvider>
-            <AuthProvider>
-              <UserAccountProvider>
-                <CartProvider>
-                  <RouteTracker />
-                  <Header />
-                  <main>{children}</main>
-                </CartProvider>
-              </UserAccountProvider>
-            </AuthProvider>
+            <LocationProvider>
+              <AuthProvider>
+                <UserAccountProvider>
+                  <CartProvider>
+                    <RouteTracker />
+                    <Header />
+                    <main>{children}</main>
+                  </CartProvider>
+                </UserAccountProvider>
+              </AuthProvider>
+            </LocationProvider>
           </SettingsProvider>
         </ThemeProvider>
       </body>

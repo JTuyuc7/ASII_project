@@ -15,6 +15,14 @@ export type {
   WishlistItem,
 } from './UserAccountContext';
 
+// Location context and hooks
+export {
+  LocationProvider,
+  useLocation,
+  useWatchLocation,
+} from './LocationContext';
+export type { UserLocation } from './LocationContext';
+
 // Cart components
 export { AddToCartButton } from '@/components/cart/AddToCartButton';
 export { CartDrawer } from '@/components/cart/CartDrawer';
