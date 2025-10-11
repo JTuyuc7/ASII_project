@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useLocation } from '@/contexts/LocationContext';
+import { useEffect, useRef } from 'react';
 import './styles.css';
 
 // Import dinámico (evita problemas de SSR)
@@ -14,36 +15,12 @@ const loadMapbox = async () => {
   return mapboxgl!;
 };
 
-type LatLng = { lat: number; lng: number };
-
 export default function MapClient() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<import('mapbox-gl').Map | null>(null);
 
-  const [center, setCenter] = useState<LatLng | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // Fallback: Ciudad de Guatemala
-  const fallback: LatLng = { lat: 14.556043, lng: -90.73313 };
-
-  // 1) Obtener ubicación del usuario
-  useEffect(() => {
-    if (!('geolocation' in navigator)) {
-      setError('Geolocalización no soportada por el navegador.');
-      setCenter(fallback);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      },
-      err => {
-        setError(err.message || 'No se pudo obtener la ubicación.');
-        setCenter(fallback);
-      },
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-    );
-  }, []);
+  // Use location from context
+  const { location: center, error, isLoading } = useLocation();
 
   // 2) Inicializar Mapbox cuando tengamos centro y contenedor
   useEffect(() => {
@@ -121,7 +98,7 @@ export default function MapClient() {
           ⚠️ {error} (usando ubicación por defecto)
         </div>
       )}
-      {!center ? (
+      {isLoading || !center ? (
         <div
           style={{
             display: 'flex',

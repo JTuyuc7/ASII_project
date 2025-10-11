@@ -1,92 +1,68 @@
 'use client';
 
+import { getProductsAction } from '@/app/actions/HomeProductAction';
 import ProductCard, { Product } from '@/components/products/ProductCard';
+import { useLocation } from '@/contexts/LocationContext';
+import { transformProductsResponse } from '@/utils/productTransformers';
 import {
+  Alert,
   Button,
+  Center,
   Container,
   Group,
+  Loader,
   SimpleGrid,
+  Stack,
   Text,
   Title,
 } from '@mantine/core';
-
-// Dummy product data with location information
-const outstandingProducts: Product[] = [
-  {
-    id: 1,
-    name: 'Motor V8 Ford Mustang',
-    price: '$2,500',
-    originalPrice: '$3,000',
-    condition: 'Usado - Excelente estado',
-    location: 'Ciudad de México',
-    distance: '5 km',
-    rating: 4.8,
-    reviews: 24,
-    image: '/bannerImg.jpg',
-    isNew: false,
-    onSale: true,
-    seller: 'AutoPartes México',
-    coordinates: { lat: 19.4326, lng: -99.1332 },
-  },
-  {
-    id: 2,
-    name: 'Transmisión Automática',
-    price: '$1,800',
-    originalPrice: '$2,200',
-    condition: 'Usado - Buen estado',
-    location: 'Guadalajara',
-    distance: '12 km',
-    rating: 4.5,
-    reviews: 18,
-    image: '/bannerImg.jpg',
-    isNew: false,
-    onSale: true,
-    seller: 'Transmisiones GDL',
-    coordinates: { lat: 20.6597, lng: -103.3496 },
-  },
-  {
-    id: 3,
-    name: 'Set de 4 Llantas Michelin',
-    price: '$800',
-    originalPrice: undefined,
-    condition: 'Nuevo',
-    location: 'Monterrey',
-    distance: '8 km',
-    rating: 5.0,
-    reviews: 45,
-    image: '/bannerImg.jpg',
-    isNew: true,
-    onSale: false,
-    seller: 'Llantas del Norte',
-    coordinates: { lat: 25.6866, lng: -100.3161 },
-  },
-  {
-    id: 4,
-    name: 'Kit de Frenos Brembo',
-    price: '$450',
-    originalPrice: undefined,
-    condition: 'Nuevo',
-    location: 'Puebla',
-    distance: '15 km',
-    rating: 4.9,
-    reviews: 32,
-    image: '/bannerImg.jpg',
-    isNew: true,
-    onSale: false,
-    seller: 'Frenos Premium',
-    coordinates: { lat: 19.0414, lng: -98.2063 },
-  },
-];
+import { IconAlertCircle } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
 
 export default function OutstandingProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Get user location from context
+  const { location: userLocation } = useLocation();
+
+  useEffect(() => {
+    loadProducts();
+  }, [userLocation]); // Reload when user location changes
+
+  const loadProducts = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await getProductsAction();
+
+      if (result.success && result.data) {
+        // Transform API data to Product format with distance calculation
+        const transformedProducts = transformProductsResponse(
+          result.data,
+          userLocation
+        );
+        // Show only first 8 products for "outstanding" section
+        setProducts(transformedProducts.slice(0, 8));
+      } else {
+        setError(result.error || 'Error al cargar los productos');
+      }
+    } catch (err) {
+      setError('Error inesperado al cargar los productos');
+      console.error('Error loading products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddToCart = (productId: number) => {
-    // tslint:disable-next-line no-console
     console.log('Added to cart:', productId);
     // Add cart logic here
   };
 
   const handleToggleFavorite = (productId: number) => {
-    // tslint:disable-next-line no-console
     console.log('Toggle favorite:', productId);
     // Add favorite logic here
   };
@@ -107,16 +83,60 @@ export default function OutstandingProducts() {
         </Button>
       </Group>
 
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-        {outstandingProducts.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={handleAddToCart}
-            onToggleFavorite={handleToggleFavorite}
-          />
-        ))}
-      </SimpleGrid>
+      {/* Loading State */}
+      {loading && (
+        <Center py={60}>
+          <Stack align="center" gap="md">
+            <Loader size="lg" color="brand.9" />
+            <Text c="dimmed">Cargando productos...</Text>
+          </Stack>
+        </Center>
+      )}
+
+      {/* Error State */}
+      {!loading && error && (
+        <Alert
+          icon={<IconAlertCircle size="1rem" />}
+          title="Error al cargar productos"
+          color="red"
+          mb="xl"
+        >
+          <Stack gap="sm">
+            <Text>{error}</Text>
+            <Button variant="light" color="red" onClick={loadProducts}>
+              Reintentar
+            </Button>
+          </Stack>
+        </Alert>
+      )}
+
+      {/* Empty State */}
+      {!loading && !error && products.length === 0 && (
+        <Center py={60}>
+          <Stack align="center" gap="md">
+            <Text size="lg" c="dimmed">
+              No hay productos disponibles en este momento
+            </Text>
+            <Button variant="light" color="brand.9" onClick={loadProducts}>
+              Recargar
+            </Button>
+          </Stack>
+        </Center>
+      )}
+
+      {/* Products Grid */}
+      {!loading && !error && products.length > 0 && (
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+          {products.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={handleAddToCart}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          ))}
+        </SimpleGrid>
+      )}
     </Container>
   );
 }
