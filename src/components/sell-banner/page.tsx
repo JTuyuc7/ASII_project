@@ -1,12 +1,31 @@
 'use client';
 
+import { useAuth } from '@/contexts/AuthContext';
 import { Box, Container, Text, Title, rem } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import { customColors } from '../../theme';
 
 export default function SellBanner() {
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+
+  const isSupplier = user?.role === 'PROVEEDOR';
+
   const handleStartSelling = () => {
-    // TODO: Implement navigation to sell/register page
-    console.log('Comenzar a vender clicked');
+    if (!isAuthenticated) {
+      // Si no está autenticado, redirigir a login
+      router.push('/');
+      return;
+    }
+
+    // Redirigir a settings con el tab correspondiente
+    if (isSupplier) {
+      // Si es proveedor, ir al tab de agregar producto
+      router.push('/account/settings?tab=sell');
+    } else {
+      // Si es cliente, ir al tab de convertirse en proveedor
+      router.push('/account/settings?tab=prov');
+    }
   };
 
   return (
@@ -69,7 +88,9 @@ export default function SellBanner() {
             textShadow: '0 1px 2px rgba(0,0,0,0.2)',
           }}
         >
-          Únete a nuestra comunidad y vende tus autopartes fácilmente
+          {isSupplier
+            ? 'Agrega nuevos productos a tu catálogo'
+            : 'Únete a nuestra comunidad y vende tus autopartes fácilmente'}
         </Text>
 
         {/* Call to Action Button */}
@@ -93,7 +114,7 @@ export default function SellBanner() {
             e.currentTarget.style.fontSize = rem(16);
           }}
         >
-          Comenzar a vender
+          {isSupplier ? 'Agregar un producto' : 'Comenzar a vender'}
         </button>
       </Container>
     </Box>

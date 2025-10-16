@@ -2,22 +2,32 @@
 
 import { Coordinates } from '@/utils/location';
 import {
+  Anchor,
   Badge,
   Box,
   Button,
   Card,
   Group,
-  Paper,
-  Stack,
   Text,
   Title,
 } from '@mantine/core';
 import {
+  IconExternalLink,
   IconMapPin,
   IconNavigation,
-  IconRoute,
-  IconZoom,
 } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
+
+// Import dinámico de Mapbox (evita problemas de SSR)
+let mapboxgl: typeof import('mapbox-gl') | null = null;
+const loadMapbox = async () => {
+  if (!mapboxgl) {
+    const mod = await import('mapbox-gl');
+    // @ts-expect-error (no typings)
+    mapboxgl = mod.default;
+  }
+  return mapboxgl!;
+};
 
 interface MapPlaceholderProps {
   coordinates: Coordinates;
@@ -29,17 +39,86 @@ interface MapPlaceholderProps {
 export default function MapPlaceholder({
   coordinates,
   location,
-  distance,
-  //productName,
+  productName,
 }: MapPlaceholderProps) {
-  const handleGetDirections = () => {
-    console.log('Get directions to:', coordinates);
-    // In a real app, this would open maps app or show directions
-  };
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<import('mapbox-gl').Map | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleViewFullMap = () => {
-    console.log('View full map');
-    // Open a full-screen map view
+  // Inicializar el mapa de Mapbox
+  useEffect(() => {
+    const init = async () => {
+      if (!coordinates || !containerRef.current || mapRef.current) return;
+
+      try {
+        const mb = await loadMapbox();
+        // @ts-expect-error (no typings)
+        mb.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
+
+        const map = new mb.Map({
+          container: containerRef.current,
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [coordinates.lng, coordinates.lat],
+          zoom: 14,
+          pitch: 0,
+          bearing: 0,
+        });
+        mapRef.current = map;
+
+        // Controles
+        map.addControl(new mb.NavigationControl(), 'top-right');
+        map.addControl(new mb.FullscreenControl(), 'top-right');
+        map.addControl(new mb.ScaleControl({ unit: 'metric' }), 'bottom-left');
+
+        // Marcador del producto
+        const el = document.createElement('div');
+        el.style.width = '30px';
+        el.style.height = '30px';
+        el.innerHTML = '📍';
+        el.style.fontSize = '30px';
+        el.style.cursor = 'pointer';
+
+        new mb.Marker({ element: el })
+          .setLngLat([coordinates.lng, coordinates.lat])
+          .setPopup(
+            new mb.Popup({ offset: 25 }).setHTML(
+              `<div style="padding: 8px;">
+                <strong>${productName}</strong><br/>
+                <small>${location}</small>
+              </div>`
+            )
+          )
+          .addTo(map);
+
+        setIsLoading(false);
+
+        // Limpieza
+        map.on('remove', () => {
+          mapRef.current = null;
+        });
+      } catch (err) {
+        console.error('Error loading map:', err);
+        setError('No se pudo cargar el mapa');
+        setIsLoading(false);
+      }
+    };
+
+    init();
+
+    // Cleanup al desmontar
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
+  }, [coordinates, location, productName]);
+
+  // URL para Google Maps
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`;
+
+  const handleGetDirections = () => {
+    window.open(googleMapsUrl, '_blank');
   };
 
   return (
@@ -47,72 +126,71 @@ export default function MapPlaceholder({
       <Group justify="space-between" mb="md">
         <Title order={3}>Ubicación del Producto</Title>
         <Badge variant="light" color="brand.9">
-          Ubicación Aproximada
+          Ubicación del Proveedor
         </Badge>
       </Group>
 
-      {/* Map Placeholder */}
-      <Paper
-        h={300}
-        bg="gradient-to-br from-blue-50 to-purple-50"
+      {/* Mapa Real con Mapbox */}
+      <Box
+        h={400}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          borderRadius: '8px',
+          overflow: 'hidden',
           marginBottom: '1rem',
-          borderRadius: '12px',
-          border: '2px dashed #1A2A80',
           position: 'relative',
-          backgroundImage: 'linear-gradient(135deg, #f5f6fd 0%, #e8eaf9 100%)',
         }}
       >
-        <Stack align="center" gap="md">
-          <IconMapPin size={64} color="#1A2A80" />
-          <Text size="xl" fw={600} c="brand.9">
-            Mapa Interactivo
-          </Text>
-          <Text size="sm" c="dimmed" ta="center" maw={250}>
-            Ubicación aproximada del producto para proteger la privacidad del
-            vendedor
-          </Text>
-          <Group gap="sm">
-            <Badge variant="filled" color="brand.9" size="lg">
-              📍 {location}
-            </Badge>
-            {distance && (
-              <Badge variant="outline" color="secondary" size="lg">
-                📏 {distance}
-              </Badge>
-            )}
-          </Group>
-
-          {/* Mock coordinates display */}
-          <Text size="xs" c="dimmed" ta="center">
-            Lat: {coordinates.lat.toFixed(4)}, Lng: {coordinates.lng.toFixed(4)}
-          </Text>
-        </Stack>
-
-        {/* Mock zoom controls */}
-        <Box
-          style={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-          }}
-        >
-          <Stack gap="xs">
-            <Button size="xs" variant="filled" color="white" c="gray.7">
-              <IconZoom size={14} />
-            </Button>
-            <Button size="xs" variant="filled" color="white" c="gray.7">
-              +
-            </Button>
-            <Button size="xs" variant="filled" color="white" c="gray.7">
-              -
-            </Button>
-          </Stack>
-        </Box>
-      </Paper>
+        {error && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              backgroundColor: '#f5f5f5',
+              borderRadius: '8px',
+              border: '2px dashed #dee2e6',
+            }}
+          >
+            <div style={{ textAlign: 'center' }}>
+              <IconMapPin size={48} color="#6c757d" />
+              <Text c="dimmed" mt="sm">
+                {error}
+              </Text>
+              <Text size="sm" c="dimmed" mt="xs">
+                Lat: {coordinates.lat.toFixed(6)}, Lng:{' '}
+                {coordinates.lng.toFixed(6)}
+              </Text>
+            </div>
+          </div>
+        )}
+        {isLoading && !error && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              fontSize: 18,
+              color: '#666',
+              backgroundColor: '#f5f5f5',
+              borderRadius: '8px',
+            }}
+          >
+            Cargando mapa…
+          </div>
+        )}
+        {!error && (
+          <div
+            ref={containerRef}
+            style={{
+              width: '100%',
+              height: '100%',
+              display: isLoading ? 'none' : 'block',
+            }}
+          />
+        )}
+      </Box>
 
       {/* Location Details */}
       <Group gap="md" mb="md">
@@ -126,17 +204,17 @@ export default function MapPlaceholder({
           </div>
         </Group>
 
-        {distance && (
+        {/* {distance && (
           <Group gap="xs">
             <IconRoute size={18} color="#28a745" />
             <div>
               <Text fw={500}>Distancia</Text>
               <Text size="sm" c="dimmed">
-                {distance} de tu ubicación
+                {distance}
               </Text>
             </div>
           </Group>
-        )}
+        )} */}
       </Group>
 
       {/* Action Buttons */}
@@ -149,22 +227,27 @@ export default function MapPlaceholder({
         >
           Obtener Direcciones
         </Button>
-        <Button
-          variant="outline"
-          color="brand.9"
-          leftSection={<IconMapPin size={16} />}
-          onClick={handleViewFullMap}
+        <Anchor
+          href={googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'none' }}
         >
-          Ver Mapa Completo
-        </Button>
+          <Button
+            variant="outline"
+            color="brand.9"
+            leftSection={<IconExternalLink size={16} />}
+          >
+            Abrir en Google Maps
+          </Button>
+        </Anchor>
       </Group>
 
-      {/* Distance calculation info */}
+      {/* Coordinates info */}
       <Box mt="md" p="md" bg="gray.0" style={{ borderRadius: '8px' }}>
         <Text size="sm" c="dimmed" ta="center">
-          <strong>Nota:</strong> La ubicación mostrada es aproximada para
-          proteger la privacidad. La distancia se calcula desde tu ubicación
-          actual al área general donde se encuentra el producto.
+          <strong>Coordenadas:</strong> Lat: {coordinates.lat.toFixed(6)}, Lng:{' '}
+          {coordinates.lng.toFixed(6)}
         </Text>
       </Box>
     </Card>

@@ -30,11 +30,15 @@ import {
   IconShoppingBag,
   IconShoppingCartCheck,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import SellProductForm from '../../../components/products/productForm/ProductForm';
 import { useAuth } from '../../../contexts/AuthContext';
 
 export default function SettingsPage() {
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+
   const {
     settings,
     updateSettings,
@@ -51,6 +55,14 @@ export default function SettingsPage() {
   } | null>(null);
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('general');
+
+  // Establecer el tab activo desde la URL al cargar
+  useEffect(() => {
+    if (tabFromUrl) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });
@@ -143,7 +155,11 @@ export default function SettingsPage() {
       {/*  </Button>*/}
       {/*</Group>*/}
 
-      <Tabs defaultValue="general" orientation="vertical">
+      <Tabs
+        value={activeTab}
+        onChange={value => setActiveTab(value || 'general')}
+        orientation="vertical"
+      >
         <Tabs.List>
           <Tabs.Tab value="general" leftSection={<IconSettings size={16} />}>
             General

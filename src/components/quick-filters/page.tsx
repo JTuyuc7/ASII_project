@@ -12,9 +12,16 @@ import {
   Title,
 } from '@mantine/core';
 import {
+  IconArmchair,
   IconArrowRight,
   IconBolt,
+  IconCar,
+  IconCircle,
+  IconDisc,
+  IconDotsCircleHorizontal,
+  IconDroplet,
   IconEngine,
+  IconFilter,
   IconSettings,
   IconTool,
 } from '@tabler/icons-react';
@@ -26,7 +33,7 @@ interface FilterCard {
   icon: React.FC<any>;
   description: string;
   color: keyof typeof customColors;
-  href: string;
+  categoria: string;
 }
 
 const filterCards: FilterCard[] = [
@@ -34,9 +41,9 @@ const filterCards: FilterCard[] = [
     id: 'motor',
     title: 'Motor',
     icon: IconEngine,
-    description: 'Repuestos y componentes para motores',
+    description: 'Componentes y repuestos para motores',
     color: 'brand',
-    href: '/category/motor',
+    categoria: 'motor',
   },
   {
     id: 'transmision',
@@ -44,23 +51,79 @@ const filterCards: FilterCard[] = [
     icon: IconSettings,
     description: 'Sistemas de transmisión y embrague',
     color: 'secondary',
-    href: '/category/transmision',
+    categoria: 'transmision',
+  },
+  {
+    id: 'suspension',
+    title: 'Suspensión',
+    icon: IconTool,
+    description: 'Amortiguadores y componentes de suspensión',
+    color: 'warning',
+    categoria: 'suspension',
+  },
+  {
+    id: 'frenos',
+    title: 'Frenos',
+    icon: IconCircle,
+    description: 'Pastillas, discos y sistemas de frenos',
+    color: 'success',
+    categoria: 'frenos',
   },
   {
     id: 'electrico',
-    title: 'Eléctrico',
+    title: 'Sistema Eléctrico',
     icon: IconBolt,
     description: 'Componentes eléctricos y electrónicos',
-    color: 'warning',
-    href: '/category/electrico',
+    color: 'brand',
+    categoria: 'electrico',
   },
   {
-    id: 'herramientas',
-    title: 'Herramientas',
-    icon: IconTool,
-    description: 'Herramientas profesionales y accesorios',
+    id: 'carroceria',
+    title: 'Carrocería',
+    icon: IconCar,
+    description: 'Piezas y accesorios de carrocería',
+    color: 'secondary',
+    categoria: 'carroceria',
+  },
+  {
+    id: 'interior',
+    title: 'Interior',
+    icon: IconArmchair,
+    description: 'Accesorios y componentes del interior',
+    color: 'warning',
+    categoria: 'interior',
+  },
+  {
+    id: 'neumaticos',
+    title: 'Neumáticos',
+    icon: IconDisc,
+    description: 'Neumáticos y componentes de ruedas',
     color: 'success',
-    href: '/category/herramientas',
+    categoria: 'neumaticos',
+  },
+  {
+    id: 'aceites',
+    title: 'Aceites y Lubricantes',
+    icon: IconDroplet,
+    description: 'Aceites, lubricantes y fluidos',
+    color: 'brand',
+    categoria: 'aceites',
+  },
+  {
+    id: 'filtros',
+    title: 'Filtros',
+    icon: IconFilter,
+    description: 'Filtros de aire, aceite y combustible',
+    color: 'secondary',
+    categoria: 'filtros',
+  },
+  {
+    id: 'otros',
+    title: 'Otros',
+    icon: IconDotsCircleHorizontal,
+    description: 'Otros repuestos y accesorios',
+    color: 'warning',
+    categoria: 'otros',
   },
 ];
 
@@ -80,6 +143,9 @@ function QuickFilterCard({ card, onClick }: QuickFilterCardProps) {
         transition: 'all 0.2s ease',
         border: `1px solid ${customColors.neutral[2]}`,
         backgroundColor: 'white',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
       }}
       styles={{
         root: {
@@ -132,7 +198,14 @@ function QuickFilterCard({ card, onClick }: QuickFilterCardProps) {
         </ThemeIcon>
       </Group>
 
-      <Box>
+      <Box
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
         <Title
           order={4}
           mb="xs"
@@ -149,6 +222,7 @@ function QuickFilterCard({ card, onClick }: QuickFilterCardProps) {
           style={{
             color: customColors.neutral[6],
             lineHeight: 1.5,
+            flex: 1,
           }}
         >
           {description}
@@ -162,7 +236,8 @@ export default function QuickFilters() {
   const router = useRouter();
 
   const handleCardClick = (card: FilterCard) => {
-    router.push(card.href);
+    // Navegar a la página de búsqueda con filtro de categoría
+    router.push(`/search?categoria=${card.categoria}`);
   };
 
   return (
@@ -176,7 +251,7 @@ export default function QuickFilters() {
             fontWeight: 700,
           }}
         >
-          Filtros rápidos
+          Categorías de Productos
         </Title>
 
         <Text
@@ -185,13 +260,16 @@ export default function QuickFilters() {
             color: customColors.neutral[6],
           }}
         >
-          Encuentra rápidamente lo que necesitas navegando por categorías
+          Explora nuestro catálogo de repuestos automotrices por categorías
         </Text>
       </Box>
 
       <Grid gutter="lg">
         {filterCards.map(card => (
-          <Grid.Col key={card.id} span={{ base: 12, xs: 6, sm: 6, md: 3 }}>
+          <Grid.Col
+            key={card.id}
+            span={{ base: 12, xs: 6, sm: 6, md: 4, lg: 3 }}
+          >
             <QuickFilterCard
               card={card}
               onClick={() => handleCardClick(card)}
