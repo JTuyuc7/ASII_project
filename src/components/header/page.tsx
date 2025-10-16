@@ -1,20 +1,13 @@
 'use client';
 
-import {
-  ActionIcon,
-  Box,
-  Container,
-  Group,
-  Paper,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { ActionIcon, Box, Container, Group, Paper, Text } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { IconMenu2, IconSearch } from '@tabler/icons-react';
+import { IconMenu2 } from '@tabler/icons-react';
 import { useState } from 'react';
 import AuthModal, { AuthModalType } from '../AuthModal';
 import { CartDrawer } from '../cart/CartDrawer';
 import { CartIcon } from '../cart/CartIcon';
+import SearchBar from '../search/SearchBar';
 // import { useAuth } from '../../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
@@ -51,7 +44,7 @@ export default function Header() {
         }}
       >
         <Container size="xl">
-          <Group justify="space-between" h={84} px="md">
+          <Group justify="space-between" h={90} px="md">
             {/* Logo */}
             {!isMobile ? (
               <Box
@@ -80,21 +73,11 @@ export default function Header() {
 
             {/* Search Bar */}
             <Box style={{ flex: 1, maxWidth: 450, margin: '0 2rem' }}>
-              <TextInput
+              <SearchBar
                 placeholder="Buscar repuestos..."
-                leftSection={<IconSearch size={16} />}
-                radius="md"
-                size="lg"
-                styles={{
-                  input: {
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #b1b4b7',
-                    '&:focus': {
-                      borderColor: '#1A2A80',
-                      backgroundColor: '#fff',
-                    },
-                  },
-                }}
+                showCategoryFilter={true}
+                showPreview={true}
+                debounceMs={400}
               />
             </Box>
 

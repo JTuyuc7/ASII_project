@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Button,
   Container,
@@ -10,8 +11,31 @@ import {
   Title,
 } from '@mantine/core';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const BannerShopPage = () => {
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+
+  const isSupplier = user?.role === 'PROVEEDOR';
+
+  const handleSellClick = () => {
+    if (!isAuthenticated) {
+      // Si no está autenticado, redirigir a login
+      router.push('/');
+      return;
+    }
+
+    // Redirigir a settings con el tab correspondiente
+    if (isSupplier) {
+      // Si es proveedor, ir al tab de agregar producto
+      router.push('/account/settings?tab=sell');
+    } else {
+      // Si es cliente, ir al tab de convertirse en proveedor
+      router.push('/account/settings?tab=prov');
+    }
+  };
+
   return (
     <Container size="xl" py={40}>
       <Grid gutter={40} align="center">
@@ -23,11 +47,16 @@ const BannerShopPage = () => {
             Compra y vende autopartes nuevas y usadas cerca de ti
           </Text>
           <Group>
-            <Button size="lg" radius="md" color="dark">
+            {/* <Button size="lg" radius="md" color="dark">
               Explorar productos
-            </Button>
-            <Button size="lg" radius="md" variant="default">
-              Vender repuestos
+            </Button> */}
+            <Button
+              size="lg"
+              radius="md"
+              variant="default"
+              onClick={handleSellClick}
+            >
+              {isSupplier ? 'Agregar un producto' : 'Vender repuestos'}
             </Button>
           </Group>
         </Grid.Col>

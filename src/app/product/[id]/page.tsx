@@ -1,19 +1,27 @@
 'use client';
 
+import {
+  getProductByIdAction,
+  ProductResponse,
+} from '@/app/actions/HomeProductAction';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import MapPlaceholder from '@/components/products/MapPlaceholder';
 import {
   ActionIcon,
+  Alert,
   Anchor,
   Badge,
   Box,
   Breadcrumbs,
   Button,
   Card,
+  Center,
   Container,
   Divider,
   Grid,
   Group,
   Image,
+  Loader,
   NumberInput,
   Paper,
   Rating,
@@ -24,13 +32,13 @@ import {
   Title,
 } from '@mantine/core';
 import {
+  IconAlertCircle,
   IconArrowLeft,
   IconHeart,
   IconMapPin,
   IconMessage,
   IconPhone,
   IconShare,
-  IconShoppingCart,
   IconStar,
   IconTruck,
   IconUser,
@@ -44,73 +52,30 @@ interface ProductDetailProps {
   }>;
 }
 
-// Mock product data - in real app this would come from an API
-const getProductById = (id: string) => {
-  const products = [
-    {
-      id: 1,
-      name: 'Motor V8 Ford Mustang',
-      price: 2500,
-      originalPrice: 3000,
-      condition: 'Usado - Excelente estado',
-      location: 'Ciudad de México',
-      distance: '5 km',
-      rating: 4.8,
-      reviews: 24,
-      images: [
-        '/bannerImg.jpg',
-        '/bannerImg.jpg',
-        '/bannerImg.jpg',
-        '/bannerImg.jpg',
-      ],
-      isNew: false,
-      onSale: true,
-      seller: {
-        name: 'AutoPartes México',
-        rating: 4.9,
-        reviews: 156,
-        memberSince: '2020',
-        verified: true,
-      },
-      coordinates: { lat: 19.4326, lng: -99.1332 },
-      description: `Motor V8 de Ford Mustang en excelente estado. Ha sido completamente revisado y está listo para instalación. 
-      
-Características:
-• Cilindros: 8
-• Desplazamiento: 5.0L
-• Potencia: 420 HP
-• Millaje: 85,000 km
-• Última revisión: Marzo 2024
-
-El motor ha sido probado y funciona perfectamente. Incluye todos los accesorios originales. Ideal para restauración o reemplazo.`,
-      specifications: {
-        Marca: 'Ford',
-        Modelo: 'Mustang',
-        Año: '2015-2019',
-        Tipo: 'V8 Coyote',
-        Desplazamiento: '5.0L',
-        Potencia: '420 HP',
-        Millaje: '85,000 km',
-        Estado: 'Excelente',
-      },
-      shipping: {
-        available: true,
-        cost: 150,
-        time: '3-5 días hábiles',
-        pickupAvailable: true,
-      },
-      warranty: '30 días de garantía',
-      category: 'Motores',
-    },
-    // Add more products as needed
-  ];
-
-  return products.find(p => p.id.toString() === id) || products[0];
+// Helper para obtener el label de la categoría
+const getCategoryLabel = (categoria: string): string => {
+  const categories: Record<string, string> = {
+    motor: 'Motor',
+    transmision: 'Transmisión',
+    suspension: 'Suspensión',
+    frenos: 'Frenos',
+    electrico: 'Sistema Eléctrico',
+    carroceria: 'Carrocería',
+    interior: 'Interior',
+    neumaticos: 'Neumáticos',
+    aceites: 'Aceites y Lubricantes',
+    filtros: 'Filtros',
+    otros: 'Otros',
+  };
+  return categories[categoria] || categoria;
 };
 
 export default function ProductDetail({ params }: ProductDetailProps) {
   const router = useRouter();
   const [productId, setProductId] = useState<string>('');
+  const [product, setProduct] = useState<ProductResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
@@ -122,24 +87,122 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     });
   }, [params]);
 
-  const product = getProductById(productId);
+  // Load product data
+  useEffect(() => {
+    if (!productId) return;
 
-  // Show loading state while params are being resolved
-  if (!productId) {
+    const loadProduct = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await getProductByIdAction(Number(productId));
+
+        if (result.success && result.data) {
+          setProduct(result.data);
+        } else {
+          setError(result.error || 'Error al cargar el producto');
+        }
+      } catch (err) {
+        setError('Error inesperado al cargar el producto');
+        console.error('Error loading product:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [productId]);
+
+  // Show loading state while params are being resolved or product is loading
+  if (!productId || loading) {
     return (
       <Container size="xl" py="md">
-        <Text>Cargando...</Text>
+        <Center py={60}>
+          <Stack align="center" gap="md">
+            <Loader size="lg" color="brand.9" />
+            <Text>Cargando producto...</Text>
+          </Stack>
+        </Center>
       </Container>
     );
   }
 
+  // Show error state
+  if (error || !product) {
+    return (
+      <Container size="xl" py="md">
+        <Alert
+          icon={<IconAlertCircle size="1rem" />}
+          title="Error al cargar el producto"
+          color="red"
+        >
+          <Stack gap="sm">
+            <Text>{error || 'No se pudo encontrar el producto'}</Text>
+            <Group>
+              <Button variant="light" color="red" onClick={() => router.back()}>
+                Volver
+              </Button>
+              <Button
+                variant="light"
+                color="brand.9"
+                onClick={() => router.push('/')}
+              >
+                Ir al inicio
+              </Button>
+            </Group>
+          </Stack>
+        </Alert>
+      </Container>
+    );
+  }
+
+  // Datos reales del backend
+  const productPrice = parseFloat(product.precio);
+  const categoryLabel = getCategoryLabel(product.categoria);
+  const productCoordinates = {
+    lat: product.proveedor.latitud,
+    lng: product.proveedor.longitud,
+  };
+
+  // Datos temporales (mock) - se actualizarán con datos reales más adelante
+  const mockData = {
+    rating: 4.5,
+    reviews: 0,
+    images: [product.imagenUrl], // Por ahora solo tenemos una imagen
+    isNew: product.stock > 50,
+    onSale: false,
+    originalPrice: undefined as number | undefined,
+    seller: {
+      rating: 4.8,
+      reviews: 0,
+      memberSince: new Date(product.createdAt).getFullYear().toString(),
+      verified: true,
+    },
+    shipping: {
+      available: true,
+      cost: 50,
+      time: '3-5 días hábiles',
+      pickupAvailable: true,
+    },
+    warranty: '30 días de garantía',
+    specifications: {
+      Categoría: categoryLabel,
+      Stock: product.stock.toString(),
+      'Fecha de publicación': new Date(product.createdAt).toLocaleDateString(
+        'es-GT'
+      ),
+      Estado: product.activo ? 'Activo' : 'Inactivo',
+    },
+  };
+
   const breadcrumbItems = [
     { title: 'Inicio', href: '/' },
     {
-      title: product.category,
-      href: `/category/${product.category.toLowerCase()}`,
+      title: categoryLabel,
+      href: `/search?categoria=${product.categoria}`,
     },
-    { title: product.name, href: '#' },
+    { title: product.nombre, href: '#' },
   ].map((item, index) => (
     <Anchor
       href={item.href}
@@ -151,19 +214,12 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     </Anchor>
   ));
 
-  const handleAddToCart = () => {
-    // tslint:disable-next-line no-console
-    console.log('Added to cart:', { productId: product.id, quantity });
-  };
-
   const handleBuyNow = () => {
-    // tslint:disable-next-line no-console
     console.log('Buy now:', { productId: product.id, quantity });
   };
 
   const handleContactSeller = () => {
-    // tslint:disable-next-line no-console
-    console.log('Contact seller:', product.seller.name);
+    console.log('Contact seller:', product.proveedor.nombreComercial);
   };
 
   return (
@@ -186,39 +242,43 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             <Card withBorder radius="md">
               <Card.Section>
                 <Image
-                  src={product.images[selectedImage]}
+                  src={mockData.images[selectedImage]}
                   height={400}
-                  alt={product.name}
-                  fallbackSrc="https://placehold.co/400x400?text=Product+Image"
+                  alt={product.nombre}
+                  fallbackSrc="https://placehold.co/400x400?text=Producto"
                 />
               </Card.Section>
             </Card>
 
-            {/* Thumbnail Images */}
-            <SimpleGrid cols={4} spacing="xs">
-              {product.images.map((image, index) => (
-                <Card
-                  key={index}
-                  withBorder
-                  radius="sm"
-                  style={{
-                    cursor: 'pointer',
-                    border:
-                      selectedImage === index ? '2px solid #1A2A80' : undefined,
-                  }}
-                  onClick={() => setSelectedImage(index)}
-                >
-                  <Card.Section>
-                    <Image
-                      src={image}
-                      height={80}
-                      alt={`${product.name} ${index + 1}`}
-                      fallbackSrc="https://placehold.co/100x80?text=Thumb"
-                    />
-                  </Card.Section>
-                </Card>
-              ))}
-            </SimpleGrid>
+            {/* Thumbnail Images - Solo mostramos si hay más de una imagen */}
+            {mockData.images.length > 1 && (
+              <SimpleGrid cols={4} spacing="xs">
+                {mockData.images.map((image, index) => (
+                  <Card
+                    key={index}
+                    withBorder
+                    radius="sm"
+                    style={{
+                      cursor: 'pointer',
+                      border:
+                        selectedImage === index
+                          ? '2px solid #1A2A80'
+                          : undefined,
+                    }}
+                    onClick={() => setSelectedImage(index)}
+                  >
+                    <Card.Section>
+                      <Image
+                        src={image}
+                        height={80}
+                        alt={`${product.nombre} ${index + 1}`}
+                        fallbackSrc="https://placehold.co/100x80?text=Thumb"
+                      />
+                    </Card.Section>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            )}
           </Stack>
         </Grid.Col>
 
@@ -228,51 +288,68 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             {/* Product Title and Badges */}
             <div>
               <Group gap="xs" mb="xs">
-                {product.isNew && (
+                {mockData.isNew && (
                   <Badge color="success" variant="filled">
-                    Nuevo
+                    Stock Alto
                   </Badge>
                 )}
-                {product.onSale && (
+                {mockData.onSale && (
                   <Badge color="secondary" variant="filled">
                     Oferta
+                  </Badge>
+                )}
+                {product.stock > 0 ? (
+                  <Badge color="green" variant="light">
+                    Disponible
+                  </Badge>
+                ) : (
+                  <Badge color="red" variant="filled">
+                    Agotado
                   </Badge>
                 )}
               </Group>
 
               <Title order={1} size="h2" c="brand.9" mb="xs">
-                {product.name}
+                {product.nombre}
               </Title>
 
-              <Text c="dimmed" size="lg" mb="sm">
-                {product.condition}
-              </Text>
+              <Badge size="lg" variant="dot" color="blue">
+                {categoryLabel}
+              </Badge>
             </div>
 
             {/* Rating and Reviews */}
             <Group gap="md">
               <Group gap="xs">
-                <Rating value={product.rating} fractions={2} readOnly />
-                <Text fw={500}>{product.rating}</Text>
+                <Rating value={mockData.rating} fractions={2} readOnly />
+                <Text fw={500}>{mockData.rating}</Text>
               </Group>
-              <Text c="dimmed">({product.reviews} reseñas)</Text>
+              <Text c="dimmed">({mockData.reviews} reseñas)</Text>
             </Group>
 
             {/* Price */}
             <Group align="center" gap="md">
               <Text size="xl" fw={700} c="brand.9">
-                ${product.price.toLocaleString()}
+                Q{' '}
+                {productPrice.toLocaleString('es-GT', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </Text>
-              {product.originalPrice && (
+              {mockData.originalPrice && (
                 <Text size="lg" td="line-through" c="dimmed">
-                  ${product.originalPrice.toLocaleString()}
+                  Q{' '}
+                  {mockData.originalPrice.toLocaleString('es-GT', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </Text>
               )}
-              {product.onSale && (
+              {mockData.onSale && mockData.originalPrice && (
                 <Badge color="secondary" variant="light">
                   {Math.round(
-                    ((product.originalPrice - product.price) /
-                      product.originalPrice) *
+                    ((mockData.originalPrice - productPrice) /
+                      mockData.originalPrice) *
                       100
                   )}
                   % OFF
@@ -283,9 +360,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             {/* Location */}
             <Group gap="xs">
               <IconMapPin size={18} color="#6c757d" />
-              <Text c="dimmed">
-                {product.location} • {product.distance} de tu ubicación
-              </Text>
+              <Text c="dimmed">{product.proveedor.direccion}</Text>
             </Group>
 
             {/* Seller Info */}
@@ -294,8 +369,8 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                 <div>
                   <Group gap="xs" mb="xs">
                     <IconUser size={18} />
-                    <Text fw={600}>{product.seller.name}</Text>
-                    {product.seller.verified && (
+                    <Text fw={600}>{product.proveedor.nombreComercial}</Text>
+                    {mockData.seller.verified && (
                       <Badge color="success" size="sm" variant="light">
                         Verificado
                       </Badge>
@@ -304,13 +379,13 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                   <Group gap="md">
                     <Group gap="xs">
                       <IconStar size={14} fill="#ffd43b" color="#ffd43b" />
-                      <Text size="sm">{product.seller.rating}</Text>
+                      <Text size="sm">{mockData.seller.rating}</Text>
                     </Group>
                     <Text size="sm" c="dimmed">
-                      {product.seller.reviews} reseñas
+                      {mockData.seller.reviews} reseñas
                     </Text>
                     <Text size="sm" c="dimmed">
-                      Miembro desde {product.seller.memberSince}
+                      Miembro desde {mockData.seller.memberSince}
                     </Text>
                   </Group>
                 </div>
@@ -334,25 +409,34 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                     value={quantity}
                     onChange={value => setQuantity(Number(value) || 1)}
                     min={1}
-                    max={10}
+                    max={Math.min(product.stock, 10)}
                     w={100}
+                    disabled={product.stock === 0}
                   />
+                  <Text size="sm" c="dimmed">
+                    Stock disponible: {product.stock}
+                  </Text>
                 </Group>
 
                 <Group grow>
-                  <Button
+                  <AddToCartButton
+                    product={{
+                      id: product.id.toString(),
+                      name: product.nombre,
+                      price: productPrice,
+                      image: product.imagenUrl,
+                      description: product.descripcion,
+                      category: categoryLabel,
+                    }}
                     size="lg"
-                    color="brand.9"
-                    leftSection={<IconShoppingCart size={18} />}
-                    onClick={handleAddToCart}
-                  >
-                    Agregar al Carrito
-                  </Button>
+                    fullWidth
+                  />
                   <Button
                     size="lg"
                     variant="outline"
                     color="brand.9"
                     onClick={handleBuyNow}
+                    disabled={product.stock === 0}
                   >
                     Comprar Ahora
                   </Button>
@@ -376,7 +460,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             </Card>
 
             {/* Shipping Info */}
-            {product.shipping.available && (
+            {mockData.shipping.available && (
               <Card withBorder radius="md" p="md">
                 <Group gap="xs" mb="sm">
                   <IconTruck size={18} color="#28a745" />
@@ -385,12 +469,12 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                   </Text>
                 </Group>
                 <Text size="sm" c="dimmed" mb="xs">
-                  Costo de envío: ${product.shipping.cost}
+                  Costo de envío: Q {mockData.shipping.cost}
                 </Text>
                 <Text size="sm" c="dimmed" mb="xs">
-                  Tiempo de entrega: {product.shipping.time}
+                  Tiempo de entrega: {mockData.shipping.time}
                 </Text>
-                {product.shipping.pickupAvailable && (
+                {mockData.shipping.pickupAvailable && (
                   <Text size="sm" c="dimmed">
                     También disponible para recoger en persona
                   </Text>
@@ -408,6 +492,8 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                   variant="light"
                   leftSection={<IconPhone size={16} />}
                   color="success"
+                  component="a"
+                  href={`tel:${product.proveedor.telefono}`}
                 >
                   Llamar
                 </Button>
@@ -415,6 +501,9 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                   variant="light"
                   leftSection={<IconMessage size={16} />}
                   color="brand.9"
+                  component="a"
+                  href={`https://wa.me/${product.proveedor.telefono.replace(/\D/g, '')}`}
+                  target="_blank"
                 >
                   WhatsApp
                 </Button>
@@ -422,6 +511,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                   variant="light"
                   leftSection={<IconMessage size={16} />}
                   color="secondary"
+                  onClick={handleContactSeller}
                 >
                   Mensaje
                 </Button>
@@ -441,7 +531,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             <Tabs.Tab value="description">Descripción</Tabs.Tab>
             <Tabs.Tab value="specifications">Especificaciones</Tabs.Tab>
             <Tabs.Tab value="location">Ubicación</Tabs.Tab>
-            <Tabs.Tab value="reviews">Reseñas ({product.reviews})</Tabs.Tab>
+            <Tabs.Tab value="reviews">Reseñas ({mockData.reviews})</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="description" mt="md">
@@ -450,15 +540,15 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                 Descripción del Producto
               </Title>
               <Text style={{ whiteSpace: 'pre-line' }}>
-                {product.description}
+                {product.descripcion}
               </Text>
 
-              {product.warranty && (
+              {mockData.warranty && (
                 <>
                   <Divider my="md" />
                   <Group gap="xs">
                     <Text fw={600}>Garantía:</Text>
-                    <Text c="success">{product.warranty}</Text>
+                    <Text c="success">{mockData.warranty}</Text>
                   </Group>
                 </>
               )}
@@ -471,10 +561,10 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                 Especificaciones Técnicas
               </Title>
               <Stack gap="sm">
-                {Object.entries(product.specifications).map(([key, value]) => (
+                {Object.entries(mockData.specifications).map(([key, value]) => (
                   <Group key={key} justify="space-between">
                     <Text fw={500}>{key}:</Text>
-                    <Text>{value}</Text>
+                    <Text>{value as string}</Text>
                   </Group>
                 ))}
               </Stack>
@@ -483,10 +573,10 @@ export default function ProductDetail({ params }: ProductDetailProps) {
 
           <Tabs.Panel value="location" mt="md">
             <MapPlaceholder
-              coordinates={product.coordinates}
-              location={product.location}
-              distance={product.distance}
-              productName={product.name}
+              coordinates={productCoordinates}
+              location={product.proveedor.direccion}
+              distance="Calculando..."
+              productName={product.nombre}
             />
           </Tabs.Panel>
 
@@ -503,54 +593,65 @@ export default function ProductDetail({ params }: ProductDetailProps) {
               <Group mb="xl" align="center">
                 <div style={{ textAlign: 'center' }}>
                   <Text size="3rem" fw={700} c="brand.9">
-                    {product.rating}
+                    {mockData.rating}
                   </Text>
-                  <Rating value={product.rating} fractions={2} readOnly />
+                  <Rating value={mockData.rating} fractions={2} readOnly />
                   <Text size="sm" c="dimmed">
-                    {product.reviews} reseñas
+                    {mockData.reviews} reseñas
                   </Text>
                 </div>
               </Group>
 
-              {/* Sample Reviews */}
-              <Stack gap="md">
-                {[
-                  {
-                    user: 'Juan P.',
-                    rating: 5,
-                    date: '15 Mar 2024',
-                    comment:
-                      'Excelente producto, tal como se describe. El vendedor muy profesional.',
-                  },
-                  {
-                    user: 'María G.',
-                    rating: 4,
-                    date: '10 Mar 2024',
-                    comment:
-                      'Buen motor, funciona perfectamente. La entrega fue rápida.',
-                  },
-                  {
-                    user: 'Carlos R.',
-                    rating: 5,
-                    date: '5 Mar 2024',
-                    comment:
-                      'Recomendado 100%. El motor llegó en perfectas condiciones.',
-                  },
-                ].map((review, index) => (
-                  <Paper key={index} withBorder p="md" radius="md">
-                    <Group justify="space-between" mb="xs">
-                      <Group gap="sm">
-                        <Text fw={500}>{review.user}</Text>
-                        <Rating value={review.rating} size="sm" readOnly />
+              {/* Sample Reviews - Temporales */}
+              {mockData.reviews === 0 ? (
+                <Stack align="center" gap="md" py="xl">
+                  <Text size="lg" c="dimmed">
+                    No hay reseñas todavía
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    Sé el primero en dejar una reseña para este producto
+                  </Text>
+                </Stack>
+              ) : (
+                <Stack gap="md">
+                  {[
+                    {
+                      user: 'Juan P.',
+                      rating: 5,
+                      date: '15 Mar 2024',
+                      comment:
+                        'Excelente producto, tal como se describe. El vendedor muy profesional.',
+                    },
+                    {
+                      user: 'María G.',
+                      rating: 4,
+                      date: '10 Mar 2024',
+                      comment:
+                        'Buen producto, funciona perfectamente. La entrega fue rápida.',
+                    },
+                    {
+                      user: 'Carlos R.',
+                      rating: 5,
+                      date: '5 Mar 2024',
+                      comment:
+                        'Recomendado 100%. El producto llegó en perfectas condiciones.',
+                    },
+                  ].map((review, index) => (
+                    <Paper key={index} withBorder p="md" radius="md">
+                      <Group justify="space-between" mb="xs">
+                        <Group gap="sm">
+                          <Text fw={500}>{review.user}</Text>
+                          <Rating value={review.rating} size="sm" readOnly />
+                        </Group>
+                        <Text size="sm" c="dimmed">
+                          {review.date}
+                        </Text>
                       </Group>
-                      <Text size="sm" c="dimmed">
-                        {review.date}
-                      </Text>
-                    </Group>
-                    <Text size="sm">{review.comment}</Text>
-                  </Paper>
-                ))}
-              </Stack>
+                      <Text size="sm">{review.comment}</Text>
+                    </Paper>
+                  ))}
+                </Stack>
+              )}
             </Card>
           </Tabs.Panel>
         </Tabs>
@@ -572,7 +673,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             border: '2px dashed #dee2e6',
           }}
         >
-          <Text c="dimmed">Productos relacionados se mostrarán aquí</Text>
+          <Text c="dimmed">No se encontraron productos relacionados</Text>
         </Paper>
       </Box>
     </Container>
