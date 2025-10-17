@@ -42,8 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthContextType['user'] | null>(null);
 
   useEffect(() => {
-    console.log('checkign credentials?');
-    // Check if user has valid token on mount
     const token = localStorage.getItem('authToken');
     const userRole = localStorage.getItem('userRole');
     const userData = localStorage.getItem('userData');
@@ -95,7 +93,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    console.log('logout');
     localStorage.removeItem('authToken');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userData');

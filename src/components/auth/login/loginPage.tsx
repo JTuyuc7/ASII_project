@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   Alert,
   Anchor,
+  Box,
   Button,
   Paper,
   PasswordInput,
@@ -13,8 +14,9 @@ import {
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { useState } from 'react';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { useRef, useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { z } from 'zod';
 import { loginAction } from '../../../app/auth/login/actions';
 
@@ -30,6 +32,9 @@ interface LoginFormProps {
 export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const { login, setCurrentView, setUserSession, getLastRoute } = useAuth();
 
   const form = useForm<LoginFormData>({
@@ -52,11 +57,20 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
   const handleSubmit = async (values: LoginFormData) => {
     setLoading(true);
     setError(null);
+    setSuccess(null);
+
+    // Validar captcha
+    if (!captchaValue) {
+      setError('Por favor, completa la verificación de reCAPTCHA');
+      setLoading(false);
+      return;
+    }
 
     try {
       const result = await loginAction(values);
 
       if (result.token) {
+        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
         setUserSession(result.user); // Set user data in context
 
         // Get the last visited route and redirect there after login
@@ -64,13 +78,46 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
         const redirectTo =
           lastRoute && !lastRoute.includes('/auth/') ? lastRoute : '/main';
 
-        login(result.token, 'user', redirectTo); // Log the user in with the received token
+        // Pequeño delay para mostrar el mensaje de éxito
+        setTimeout(() => {
+          login(result.token, 'user', redirectTo); // Log the user in with the received token
+        }, 1000);
+      } else if (result.error) {
+        // Manejar errores específicos del servidor
+        if (result.error.includes('credenciales')) {
+          setError(
+            'Correo o contraseña incorrectos. Por favor, verifica tus datos.'
+          );
+        } else if (result.error.includes('usuario no encontrado')) {
+          setError('No existe una cuenta con este correo electrónico.');
+        } else if (result.error.includes('contraseña')) {
+          setError(
+            'La contraseña es incorrecta. Por favor, inténtalo de nuevo.'
+          );
+        } else {
+          setError(result.error);
+        }
+        // Reset captcha on error
+        recaptchaRef.current?.reset();
+        setCaptchaValue(null);
       }
     } catch (err) {
-      setError('Error inesperado al iniciar sesión');
-      console.log(err, 'Error details');
+      setError(
+        'Error inesperado al iniciar sesión. Por favor, intenta de nuevo más tarde.'
+      );
+      console.error('Login error:', err);
+      // Reset captcha on error
+      recaptchaRef.current?.reset();
+      setCaptchaValue(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value);
+    if (value) {
+      setError(null); // Limpiar error cuando el usuario completa el captcha
     }
   };
 
@@ -93,10 +140,20 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
           {error && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
-              title="Error"
+              title="Error de autenticación"
               color="red"
             >
               {error}
+            </Alert>
+          )}
+
+          {success && (
+            <Alert
+              icon={<IconCheck size="1rem" />}
+              title="¡Éxito!"
+              color="green"
+            >
+              {success}
             </Alert>
           )}
 
@@ -106,6 +163,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
             label="Correo"
             placeholder="tu@correo.com"
             {...form.getInputProps('email')}
+            disabled={loading || !!success}
           />
 
           <PasswordInput
@@ -114,9 +172,27 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
             label="Contraseña"
             placeholder="Tu contraseña"
             {...form.getInputProps('password')}
+            disabled={loading || !!success}
           />
 
-          <Button size="lg" type="submit" loading={loading} fullWidth mt="md">
+          {/* Google reCAPTCHA */}
+          <Box style={{ display: 'flex', justifyContent: 'center' }}>
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+              onChange={handleCaptchaChange}
+              theme="light"
+            />
+          </Box>
+
+          <Button
+            size="lg"
+            type="submit"
+            loading={loading}
+            fullWidth
+            mt="md"
+            disabled={!captchaValue || !!success}
+          >
             Iniciar sesión
           </Button>
 
