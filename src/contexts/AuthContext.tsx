@@ -16,7 +16,7 @@ interface AuthContextType {
     email: string;
     phone: string | null;
     direccion: string | null;
-    role: 'USUARIO' | 'PROVEEDOR' | 'ADMINISTRADOR' | string;
+    role: 'USER' | 'SUPPLIER' | 'ADMIN' | string;
   }) => void;
   loading: boolean;
   //token: string | null;
@@ -26,7 +26,7 @@ interface AuthContextType {
     email: string;
     phone: string | null;
     direccion: string | null;
-    role: 'USUARIO' | 'PROVEEDOR' | 'ADMINISTRADOR' | string; // Nuevo campo role
+    role: 'USER' | 'SUPPLIER' | 'ADMIN' | string; // Roles que devuelve el backend
   };
   saveCurrentRoute: (route: string) => void;
   getLastRoute: () => string | null;
@@ -35,7 +35,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isAdmin, setIsAdmin] = useState(true); // Por defecto true para pruebas
+  const [isAdmin, setIsAdmin] = useState(false); // Por defecto false, se actualiza al cargar datos
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState<AuthView>('main');
   const [loading, setLoading] = useState(true);
@@ -43,15 +43,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('userRole');
     const userData = localStorage.getItem('userData');
+
     if (userData) {
-      setUser(JSON.parse(userData) as AuthContextType['user']);
+      const parsedUser = JSON.parse(userData) as AuthContextType['user'];
+      setUser(parsedUser);
+
+      // Verificar si el rol es ADMIN (según respuesta del backend)
+      if (token && parsedUser.role === 'ADMIN') {
+        setIsAdmin(true);
+      }
     }
+
     if (token) {
       setIsAuthenticated(true);
-      setIsAdmin(userRole === 'admin');
     }
+
     setLoading(false);
   }, []);
 
@@ -75,13 +82,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = (
     token: string,
-    userRole: string = 'user',
+    //userRole: string = 'user',
     redirectTo?: string
   ) => {
     localStorage.setItem('authToken', token);
-    localStorage.setItem('userRole', userRole);
     setIsAuthenticated(true);
-    setIsAdmin(userRole === 'admin');
+
+    // Verificar si el usuario es administrador basado en los datos del user
+    if (user && user.role === 'ADMIN') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
 
     // If redirectTo is provided, navigate there
     if (redirectTo && typeof window !== 'undefined') {
@@ -113,6 +125,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setUserSession = (userData: AuthContextType['user']) => {
     setUser(userData);
     localStorage.setItem('userData', JSON.stringify(userData));
+
+    // Actualizar isAdmin cuando se establece la sesión del usuario
+    if (userData.role === 'ADMIN') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
   };
 
   return (

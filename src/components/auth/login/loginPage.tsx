@@ -71,7 +71,18 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
 
       if (result.token) {
         setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
-        setUserSession(result.user); // Set user data in context
+
+        // Mapear la respuesta del backend al formato esperado por el contexto
+        const userData = {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+          phone: result.user.telefono || null, // Mapear telefono -> phone
+          direccion: result.user.direccion || null,
+          role: result.user.role, // ADMIN, USER, SUPPLIER
+        };
+
+        setUserSession(userData); // Set user data in context
 
         // Get the last visited route and redirect there after login
         const lastRoute = getLastRoute();
@@ -80,7 +91,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginFormProps) {
 
         // Pequeño delay para mostrar el mensaje de éxito
         setTimeout(() => {
-          login(result.token, 'user', redirectTo); // Log the user in with the received token
+          login(result.token, result.user.role, redirectTo); // Log the user in with the received token and role
         }, 1000);
       } else if (result.error) {
         // Manejar errores específicos del servidor
