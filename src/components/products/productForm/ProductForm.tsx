@@ -75,7 +75,7 @@ const SellProductForm = () => {
       stock: 0,
       descripcion: '',
       categoria: '',
-      imagenUrl: '',
+      imagenUrl: [],
     },
     validate: {
       nombre: value => {
@@ -108,15 +108,20 @@ const SellProductForm = () => {
       },
       categoria: value => (!value ? 'Debe seleccionar una categoría' : null),
       imagenUrl: value => {
-        // Allow "pending-upload" as a placeholder for files to be uploaded
-        if (!value) return 'La imagen es requerida';
-        if (value === 'pending-upload') return null; // Valid placeholder
-        try {
-          new URL(value);
-          return null;
-        } catch {
-          return 'Debe proporcionar una URL válida';
+        if (!Array.isArray(value)) return 'Las imágenes deben ser un arreglo';
+        if (value.length === 0) return 'Debe proporcionar al menos una imagen';
+        if (value.length > 5) return 'No puede agregar más de 5 imágenes';
+
+        // Validate each URL
+        for (const url of value) {
+          if (url === 'pending-upload') continue; // Allow placeholder
+          try {
+            new URL(url);
+          } catch {
+            return 'Todas las URLs deben ser válidas';
+          }
         }
+        return null;
       },
     },
   });
@@ -124,11 +129,10 @@ const SellProductForm = () => {
   const handleImageUpload = (files: File[]) => {
     if (files && files.length > 0) {
       addLocalFiles(files);
-      // Set a temporary placeholder for validation
-      // The real URL will be from Cloudinary after upload
-      if (!form.values.imagenUrl) {
-        form.setFieldValue('imagenUrl', 'pending-upload');
-      }
+      // Add placeholders for each file being uploaded
+      const currentUrls = form.values.imagenUrl || [];
+      const newPlaceholders = files.map(() => 'pending-upload');
+      form.setFieldValue('imagenUrl', [...currentUrls, ...newPlaceholders]);
     }
   };
 
@@ -147,10 +151,9 @@ const SellProductForm = () => {
         return false;
       }
 
-      // Set the URL in the form for validation
-      if (!form.values.imagenUrl) {
-        form.setFieldValue('imagenUrl', url);
-      }
+      // Add the URL to the array
+      const currentUrls = form.values.imagenUrl || [];
+      form.setFieldValue('imagenUrl', [...currentUrls, url]);
 
       return true;
     } catch {
@@ -180,12 +183,13 @@ const SellProductForm = () => {
   };
 
   const handleRemoveImage = (imageId: string) => {
+    const imageIndex = images.findIndex(img => img.id === imageId);
     removeImage(imageId);
-    // Clear form imagenUrl if no images left
-    if (images.length === 1) {
-      // Will be 0 after removal
-      form.setFieldValue('imagenUrl', '');
-    }
+
+    // Remove the corresponding URL from the array
+    const currentUrls = form.values.imagenUrl || [];
+    const newUrls = currentUrls.filter((_, index) => index !== imageIndex);
+    form.setFieldValue('imagenUrl', newUrls);
   };
 
   const handleSubmit = async (values: ProductFormData) => {
@@ -203,10 +207,10 @@ const SellProductForm = () => {
         return;
       }
 
-      // Step 2: Create product with the first uploaded image URL
+      // Step 2: Create product with all uploaded image URLs
       const productData: ProductFormData = {
         ...values,
-        imagenUrl: uploadedUrls[0], // Use first uploaded image
+        imagenUrl: uploadedUrls, // Use all uploaded images
       };
       const result = await createProductAction(productData, token);
 

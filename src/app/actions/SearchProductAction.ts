@@ -42,8 +42,6 @@ export async function searchProductsAction(
     const queryString = queryParams.toString();
     const url = queryString ? `/products?${queryString}` : '/products';
 
-    console.log('🔍 Searching products with URL:', url);
-
     const response = await axiosPublicClient.get<ProductResponse[]>(url);
 
     return {

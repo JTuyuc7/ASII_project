@@ -25,9 +25,9 @@ const productSchema = z.object({
     .max(1000, 'La descripción no puede exceder 1000 caracteres'),
   categoria: z.string().min(1, 'Debe seleccionar una categoría'),
   imagenUrl: z
-    .string()
-    .url('Debe proporcionar una URL válida')
-    .min(1, 'La imagen es requerida'),
+    .array(z.string().url('Cada URL debe ser válida'))
+    .min(1, 'Debe proporcionar al menos una imagen')
+    .max(5, 'No puede agregar más de 5 imágenes'),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
@@ -50,6 +50,7 @@ export async function createProductAction(
   try {
     // Validate data with Zod
     const validatedData = productSchema.parse(data);
+    console.log(validatedData, 'validatedData');
 
     if (!token) {
       return {
@@ -71,7 +72,6 @@ export async function createProductAction(
         withCredentials: true,
       }
     );
-    console.log(response.data);
 
     return {
       success: true,

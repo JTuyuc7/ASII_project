@@ -49,7 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(JSON.parse(userData) as AuthContextType['user']);
     }
     if (token) {
-      console.log(token, 'si hay token');
       setIsAuthenticated(true);
       setIsAdmin(userRole === 'admin');
     }

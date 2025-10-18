@@ -21,7 +21,6 @@ export default function TestCaptchaPage() {
 
   const handleCaptchaChange = (value: string | null) => {
     setCaptchaValue(value);
-    console.log('Captcha value:', value);
   };
 
   return (
