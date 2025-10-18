@@ -106,11 +106,9 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
 
     try {
       const result = await registerAction(values);
-      console.log(result, 'Result from registerAction');
 
       if (result.token) {
         setSuccess('¡Cuenta creada exitosamente! Iniciando sesión...');
-        console.log('from register form');
         setUserSession(result.user); // Set user data in context
 
         // Pequeño delay para mostrar el mensaje de éxito

@@ -21,7 +21,6 @@ export default function RouteTracker() {
 
       if (isProtectedRoute) {
         saveCurrentRoute(pathname);
-        console.log('Route saved:', pathname);
       }
     }
   }, [pathname, isAuthenticated, saveCurrentRoute]);

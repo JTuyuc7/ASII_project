@@ -1,5 +1,6 @@
 'use client';
 
+import { useUserAccount } from '@/contexts/UserAccountContext';
 import { calculateDistanceFromUser, Coordinates } from '@/utils/location';
 import {
   Badge,
@@ -11,7 +12,12 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { IconHeart, IconMapPin, IconStar } from '@tabler/icons-react';
+import {
+  IconHeart,
+  IconHeartFilled,
+  IconMapPin,
+  IconStar,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AddToCartButton } from '../cart/AddToCartButton';
@@ -26,7 +32,7 @@ export interface Product {
   distance?: string;
   rating: number;
   reviews: number;
-  image: string;
+  image: string | string[]; // Soporta tanto string único como arreglo
   isNew: boolean;
   onSale: boolean;
   seller: string;
@@ -44,10 +50,18 @@ export default function ProductCard({
   onToggleFavorite,
 }: ProductCardProps) {
   const router = useRouter();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useUserAccount();
   const [calculatedDistance, setCalculatedDistance] = useState<string>(
     product.distance || ''
   );
   const [isCalculating, setIsCalculating] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+
+  // Check if product is in wishlist
+  useEffect(() => {
+    setIsFavorite(isInWishlist(product.id.toString()));
+  }, [isInWishlist, product.id]);
 
   useEffect(() => {
     const updateDistance = async () => {
@@ -72,10 +86,38 @@ export default function ProductCard({
     router.push(`/product/${product.id}`);
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleFavorite?.(product.id);
+    setIsFavoriteLoading(true);
+
+    try {
+      if (isFavorite) {
+        await removeFromWishlist(product.id.toString());
+        setIsFavorite(false);
+      } else {
+        await addToWishlist(product.id.toString(), {
+          productId: product.id.toString(),
+          name: product.name,
+          price: parseFloat(product.price.replace(/[Q$,]/g, '')),
+          image: productImage,
+          inStock: true,
+        });
+        setIsFavorite(true);
+      }
+
+      // Call the optional callback if provided
+      onToggleFavorite?.(product.id);
+    } catch (error) {
+      console.error('Error al cambiar favorito:', error);
+    } finally {
+      setIsFavoriteLoading(false);
+    }
   };
+
+  // Normalizar imagen a string único (usar la primera si es array)
+  const productImage = Array.isArray(product.image)
+    ? product.image[0] || 'https://placehold.co/400x200?text=Sin+Imagen'
+    : product.image || 'https://placehold.co/400x200?text=Sin+Imagen';
 
   return (
     <Card
@@ -101,10 +143,10 @@ export default function ProductCard({
       <Card.Section>
         <Box style={{ position: 'relative' }}>
           <Image
-            src={product.image}
+            src={productImage}
             height={200}
             alt={product.name}
-            fallbackSrc="https://placehold.co/400x200?text=Product+Image"
+            fallbackSrc="https://placehold.co/400x200?text=Sin+Imagen"
           />
 
           {/* Badges */}
@@ -139,20 +181,29 @@ export default function ProductCard({
             <Button
               variant="filled"
               size="xs"
-              color="white"
+              color={isFavorite ? 'red' : 'white'}
               onClick={handleToggleFavorite}
+              loading={isFavoriteLoading}
               styles={{
                 root: {
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  color: '#666',
+                  backgroundColor: isFavorite
+                    ? 'rgba(239, 68, 68, 0.9)'
+                    : 'rgba(255, 255, 255, 0.9)',
+                  color: isFavorite ? 'white' : '#666',
                   '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 1)',
-                    color: '#e74c3c',
+                    backgroundColor: isFavorite
+                      ? 'rgba(239, 68, 68, 1)'
+                      : 'rgba(255, 255, 255, 1)',
+                    color: isFavorite ? 'white' : '#e74c3c',
                   },
                 },
               }}
             >
-              <IconHeart size={16} />
+              {isFavorite ? (
+                <IconHeartFilled size={16} />
+              ) : (
+                <IconHeart size={16} />
+              )}
             </Button>
           </Box>
         </Box>
@@ -223,7 +274,7 @@ export default function ProductCard({
               id: product.id.toString(),
               name: product.name,
               price: parseFloat(product.price.replace(/[$,]/g, '')),
-              image: product.image,
+              image: productImage,
               description: `${product.condition} - ${product.seller}`,
               category: 'Auto Partes',
             }}

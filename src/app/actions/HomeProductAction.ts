@@ -19,7 +19,7 @@ export interface ProductResponse {
   stock: number;
   proveedorId: number;
   categoria: string;
-  imagenUrl: string;
+  imagenUrl: string | string[]; // Soporta tanto string único como arreglo
   activo: boolean;
   createdAt: string;
   updatedAt: string;

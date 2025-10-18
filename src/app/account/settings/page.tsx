@@ -48,7 +48,7 @@ export default function SettingsPage() {
     isLoading,
   } = useSettings();
   const { user } = useAuth();
-  console.log(user.role, 'datos del usuario');
+
   const [notification, setNotification] = useState<{
     type: 'success' | 'error';
     message: string;

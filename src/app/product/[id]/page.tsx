@@ -6,6 +6,7 @@ import {
 } from '@/app/actions/HomeProductAction';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import MapPlaceholder from '@/components/products/MapPlaceholder';
+import { useUserAccount } from '@/contexts/UserAccountContext';
 import {
   ActionIcon,
   Alert,
@@ -34,7 +35,10 @@ import {
 import {
   IconAlertCircle,
   IconArrowLeft,
+  IconChevronLeft,
+  IconChevronRight,
   IconHeart,
+  IconHeartFilled,
   IconMapPin,
   IconMessage,
   IconPhone,
@@ -72,6 +76,7 @@ const getCategoryLabel = (categoria: string): string => {
 
 export default function ProductDetail({ params }: ProductDetailProps) {
   const router = useRouter();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useUserAccount();
   const [productId, setProductId] = useState<string>('');
   const [product, setProduct] = useState<ProductResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -79,6 +84,8 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
 
   // Handle async params
   useEffect(() => {
@@ -100,6 +107,8 @@ export default function ProductDetail({ params }: ProductDetailProps) {
 
         if (result.success && result.data) {
           setProduct(result.data);
+          // Check if product is in wishlist
+          setIsFavorite(isInWishlist(productId));
         } else {
           setError(result.error || 'Error al cargar el producto');
         }
@@ -112,7 +121,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     };
 
     loadProduct();
-  }, [productId]);
+  }, [productId, isInWishlist]);
 
   // Show loading state while params are being resolved or product is loading
   if (!productId || loading) {
@@ -165,11 +174,24 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     lng: product.proveedor.longitud,
   };
 
+  // Normalizar imagenUrl a array y validar
+  const productImages = Array.isArray(product.imagenUrl)
+    ? product.imagenUrl.filter(url => url && url.trim() !== '')
+    : product.imagenUrl && product.imagenUrl.trim() !== ''
+      ? [product.imagenUrl]
+      : [];
+
+  // Si no hay imágenes válidas, usar fallback
+  const images =
+    productImages.length > 0
+      ? productImages
+      : ['https://placehold.co/400x400?text=Sin+Imagen'];
+
   // Datos temporales (mock) - se actualizarán con datos reales más adelante
   const mockData = {
     rating: 4.5,
     reviews: 0,
-    images: [product.imagenUrl], // Por ahora solo tenemos una imagen
+    images: images,
     isNew: product.stock > 50,
     onSale: false,
     originalPrice: undefined as number | undefined,
@@ -222,6 +244,31 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     console.log('Contact seller:', product.proveedor.nombreComercial);
   };
 
+  const handleToggleFavorite = async () => {
+    if (!product) return;
+
+    setIsFavoriteLoading(true);
+    try {
+      if (isFavorite) {
+        await removeFromWishlist(product.id.toString());
+        setIsFavorite(false);
+      } else {
+        await addToWishlist(product.id.toString(), {
+          productId: product.id.toString(),
+          name: product.nombre,
+          price: parseFloat(product.precio),
+          image: images[0],
+          inStock: product.stock > 0,
+        });
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Error al cambiar favorito:', error);
+    } finally {
+      setIsFavoriteLoading(false);
+    }
+  };
+
   return (
     <Container size="xl" py="md">
       {/* Back Button */}
@@ -238,16 +285,78 @@ export default function ProductDetail({ params }: ProductDetailProps) {
         {/* Left Column - Images */}
         <Grid.Col span={{ base: 12, md: 6 }}>
           <Stack gap="md">
-            {/* Main Image */}
-            <Card withBorder radius="md">
+            {/* Main Image with Navigation */}
+            <Card withBorder radius="md" pos="relative">
               <Card.Section>
                 <Image
                   src={mockData.images[selectedImage]}
                   height={400}
-                  alt={product.nombre}
-                  fallbackSrc="https://placehold.co/400x400?text=Producto"
+                  alt={`${product.nombre} - imagen ${selectedImage + 1}`}
+                  fallbackSrc="https://placehold.co/400x400?text=Sin+Imagen"
                 />
               </Card.Section>
+
+              {/* Navigation Arrows - Solo mostrar si hay más de una imagen */}
+              {mockData.images.length > 1 && (
+                <>
+                  <ActionIcon
+                    size="lg"
+                    variant="filled"
+                    color="brand.9"
+                    radius="xl"
+                    style={{
+                      position: 'absolute',
+                      left: 16,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      zIndex: 1,
+                    }}
+                    onClick={() =>
+                      setSelectedImage(prev =>
+                        prev === 0 ? mockData.images.length - 1 : prev - 1
+                      )
+                    }
+                  >
+                    <IconChevronLeft size={20} />
+                  </ActionIcon>
+
+                  <ActionIcon
+                    size="lg"
+                    variant="filled"
+                    color="brand.9"
+                    radius="xl"
+                    style={{
+                      position: 'absolute',
+                      right: 16,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      zIndex: 1,
+                    }}
+                    onClick={() =>
+                      setSelectedImage(prev =>
+                        prev === mockData.images.length - 1 ? 0 : prev + 1
+                      )
+                    }
+                  >
+                    <IconChevronRight size={20} />
+                  </ActionIcon>
+
+                  {/* Image Counter */}
+                  <Badge
+                    size="lg"
+                    variant="filled"
+                    color="dark"
+                    style={{
+                      position: 'absolute',
+                      bottom: 16,
+                      right: 16,
+                      zIndex: 1,
+                    }}
+                  >
+                    {selectedImage + 1} / {mockData.images.length}
+                  </Badge>
+                </>
+              )}
             </Card>
 
             {/* Thumbnail Images - Solo mostramos si hay más de una imagen */}
@@ -264,6 +373,8 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                         selectedImage === index
                           ? '2px solid #1A2A80'
                           : undefined,
+                      opacity: selectedImage === index ? 1 : 0.6,
+                      transition: 'all 0.2s ease',
                     }}
                     onClick={() => setSelectedImage(index)}
                   >
@@ -271,7 +382,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                       <Image
                         src={image}
                         height={80}
-                        alt={`${product.nombre} ${index + 1}`}
+                        alt={`${product.nombre} miniatura ${index + 1}`}
                         fallbackSrc="https://placehold.co/100x80?text=Thumb"
                       />
                     </Card.Section>
@@ -424,7 +535,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                       id: product.id.toString(),
                       name: product.nombre,
                       price: productPrice,
-                      image: product.imagenUrl,
+                      image: mockData.images[0], // Primera imagen del arreglo
                       description: product.descripcion,
                       category: categoryLabel,
                     }}
@@ -444,10 +555,19 @@ export default function ProductDetail({ params }: ProductDetailProps) {
 
                 <Group justify="center" gap="md">
                   <Button
-                    variant="subtle"
-                    leftSection={<IconHeart size={16} />}
+                    variant={isFavorite ? 'filled' : 'subtle'}
+                    color={isFavorite ? 'red' : 'gray'}
+                    leftSection={
+                      isFavorite ? (
+                        <IconHeartFilled size={16} />
+                      ) : (
+                        <IconHeart size={16} />
+                      )
+                    }
+                    onClick={handleToggleFavorite}
+                    loading={isFavoriteLoading}
                   >
-                    Agregar a Favoritos
+                    {isFavorite ? 'En Favoritos' : 'Agregar a Favoritos'}
                   </Button>
                   <Button
                     variant="subtle"
