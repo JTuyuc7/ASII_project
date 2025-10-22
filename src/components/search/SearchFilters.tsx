@@ -1,5 +1,6 @@
 'use client';
 
+import { CATEGORIES as CATEGORIES_DATA } from '@/constants/categories';
 import {
   ActionIcon,
   Badge,
@@ -34,17 +35,10 @@ export interface SearchFilters {
   sortBy: string;
 }
 
+// Map categories for this component's needs
 const categories = [
-  { value: 'all', label: 'Todas las categorías' },
-  { value: 'motores', label: 'Motores' },
-  { value: 'transmisiones', label: 'Transmisiones' },
-  { value: 'frenos', label: 'Frenos' },
-  { value: 'llantas', label: 'Llantas y Neumáticos' },
-  { value: 'suspension', label: 'Suspensión' },
-  { value: 'carroceria', label: 'Carrocería' },
-  { value: 'electricos', label: 'Eléctricos' },
-  { value: 'interior', label: 'Interior' },
-  { value: 'herramientas', label: 'Herramientas' },
+  { value: 'all', label: 'Todas las categorías', id: null },
+  ...CATEGORIES_DATA.filter(cat => cat.id !== null),
 ];
 
 const locations = [

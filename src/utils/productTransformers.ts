@@ -31,6 +31,7 @@ export const transformProductResponse = (
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`,
+    precio: parseFloat(product.precio),
     originalPrice: undefined, // Backend doesn't provide original price yet
     condition: product.stock > 0 ? 'Disponible' : 'Agotado',
     location: product.proveedor.direccion,

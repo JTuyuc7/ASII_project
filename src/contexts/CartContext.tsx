@@ -6,7 +6,7 @@ import React, { createContext, ReactNode, useContext, useReducer } from 'react';
 export interface CartItem {
   id: string;
   name: string;
-  price: number;
+  precio: number | string;
   quantity: number;
   image?: string;
   description?: string;
@@ -49,7 +49,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existingItem = state.items.find(item => item.id === action.payload.id);
+      const existingItem = state.items.find(
+        item => item.id === action.payload.id
+      );
 
       if (existingItem) {
         // Si el item ya existe, incrementar la cantidad
@@ -78,7 +80,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case 'REMOVE_ITEM': {
-      const updatedItems = state.items.filter(item => item.id !== action.payload);
+      const updatedItems = state.items.filter(
+        item => item.id !== action.payload
+      );
       return {
         ...state,
         items: updatedItems,
@@ -90,7 +94,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case 'UPDATE_QUANTITY': {
       if (action.payload.quantity <= 0) {
         // Si la cantidad es 0 o menor, remover el item
-        const updatedItems = state.items.filter(item => item.id !== action.payload.id);
+        const updatedItems = state.items.filter(
+          item => item.id !== action.payload.id
+        );
         return {
           ...state,
           items: updatedItems,
@@ -145,7 +151,12 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 // Funciones auxiliares para calcular totales
 const calculateTotal = (items: CartItem[]): number => {
-  return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  return items.reduce((total, item) => {
+    const price =
+      typeof item.price === 'string' ? parseFloat(item.price) : item.price;
+    const validPrice = isNaN(price) ? 0 : price;
+    return total + validPrice * item.quantity;
+  }, 0);
 };
 
 const calculateItemCount = (items: CartItem[]): number => {
@@ -169,7 +180,13 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   const addItem = (item: Omit<CartItem, 'quantity'>) => {
-    dispatch({ type: 'ADD_ITEM', payload: item as CartItem });
+    // Normalizar el precio a número
+    const normalizedItem = {
+      ...item,
+      precio:
+        typeof item.precio === 'string' ? parseFloat(item.precio) : item.precio,
+    };
+    dispatch({ type: 'ADD_ITEM', payload: normalizedItem as CartItem });
   };
 
   const removeItem = (id: string) => {
@@ -218,11 +235,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     isItemInCart,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 // Hook personalizado para usar el contexto del carrito

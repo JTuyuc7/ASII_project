@@ -6,6 +6,7 @@ import {
 } from '@/app/actions/HomeProductAction';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import MapPlaceholder from '@/components/products/MapPlaceholder';
+import { getCategoryLabel } from '@/constants/categories';
 import { useUserAccount } from '@/contexts/UserAccountContext';
 import {
   ActionIcon,
@@ -55,24 +56,6 @@ interface ProductDetailProps {
     id: string;
   }>;
 }
-
-// Helper para obtener el label de la categoría
-const getCategoryLabel = (categoria: string): string => {
-  const categories: Record<string, string> = {
-    motor: 'Motor',
-    transmision: 'Transmisión',
-    suspension: 'Suspensión',
-    frenos: 'Frenos',
-    electrico: 'Sistema Eléctrico',
-    carroceria: 'Carrocería',
-    interior: 'Interior',
-    neumaticos: 'Neumáticos',
-    aceites: 'Aceites y Lubricantes',
-    filtros: 'Filtros',
-    otros: 'Otros',
-  };
-  return categories[categoria] || categoria;
-};
 
 export default function ProductDetail({ params }: ProductDetailProps) {
   const router = useRouter();
@@ -168,7 +151,10 @@ export default function ProductDetail({ params }: ProductDetailProps) {
 
   // Datos reales del backend
   const productPrice = parseFloat(product.precio);
-  const categoryLabel = getCategoryLabel(product.categoria);
+  const categoryLabel = getCategoryLabel(
+    product.categoryId || product.categoria
+  );
+
   const productCoordinates = {
     lat: product.proveedor.latitud,
     lng: product.proveedor.longitud,
@@ -222,7 +208,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     { title: 'Inicio', href: '/' },
     {
       title: categoryLabel,
-      href: `/search?categoria=${product.categoria}`,
+      href: `/search?categoria=${product.categoryId || product.categoria}`,
     },
     { title: product.nombre, href: '#' },
   ].map((item, index) => (

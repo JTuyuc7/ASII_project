@@ -35,17 +35,25 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ opened, onClose }) => {
     updateQuantity(id, quantity);
   };
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | string) => {
+    // Convertir el precio a número si es string
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+
+    // Verificar si es un número válido
+    if (isNaN(numPrice) || !isFinite(numPrice)) {
+      return 'Q 0.00';
+    }
+
     return new Intl.NumberFormat('es-GT', {
       style: 'currency',
       currency: 'GTQ',
-    }).format(price);
+    }).format(numPrice);
   };
 
   const handleNavigateToCart = () => {
     router.push('/cart');
     onClose();
-  }
+  };
 
   return (
     <Drawer
@@ -57,11 +65,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ opened, onClose }) => {
           <Text size="lg" fw={600} c={customColors.brand[8]}>
             Carrito de Compras
           </Text>
-          <Badge
-            color="brand"
-            variant="filled"
-            size="sm"
-          >
+          <Badge color="brand" variant="filled" size="sm">
             {state.itemCount} productos
           </Badge>
         </Group>
@@ -107,99 +111,119 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ opened, onClose }) => {
           {/* Lista de productos */}
           <ScrollArea flex={1} p="md">
             <Stack gap="md">
-              {state.items.map((item) => (
-                <Box
-                  key={item.id}
-                  p="md"
-                  bg={customColors.neutral[0]}
-                  style={{
-                    borderRadius: '8px',
-                    border: `1px solid ${customColors.neutral[2]}`,
-                  }}
-                >
-                  <Flex gap="md" align="flex-start">
-                    {/* Imagen del producto */}
-                    <Box
-                      w={80}
-                      h={80}
-                      bg={customColors.neutral[1]}
-                      style={{
-                        borderRadius: '6px',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          w="100%"
-                          h="100%"
-                          fit="cover"
-                        />
-                      ) : (
-                        <Flex align="center" justify="center" h="100%">
-                          <IconShoppingCart size={32} color={customColors.neutral[4]} />
-                        </Flex>
-                      )}
-                    </Box>
+              {state.items.map(item => {
+                return (
+                  <Box
+                    key={item.id}
+                    p="md"
+                    bg={customColors.neutral[0]}
+                    style={{
+                      borderRadius: '8px',
+                      border: `1px solid ${customColors.neutral[2]}`,
+                    }}
+                  >
+                    <Flex gap="md" align="flex-start">
+                      {/* Imagen del producto */}
+                      <Box
+                        w={80}
+                        h={80}
+                        bg={customColors.neutral[1]}
+                        style={{
+                          borderRadius: '6px',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {item.image ? (
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            w="100%"
+                            h="100%"
+                            fit="cover"
+                          />
+                        ) : (
+                          <Flex align="center" justify="center" h="100%">
+                            <IconShoppingCart
+                              size={32}
+                              color={customColors.neutral[4]}
+                            />
+                          </Flex>
+                        )}
+                      </Box>
 
-                    {/* Información del producto */}
-                    <Stack gap="xs" flex={1}>
-                      <Group justify="space-between" align="flex-start">
-                        <Box flex={1}>
-                          <Text fw={600} size="sm" c={customColors.brand[8]}>
-                            {item.name}
-                          </Text>
-                          {item.description && (
-                            <Text size="xs" c={customColors.neutral[6]} lineClamp={2}>
-                              {item.description}
+                      {/* Información del producto */}
+                      <Stack gap="xs" flex={1}>
+                        <Group justify="space-between" align="flex-start">
+                          <Box flex={1}>
+                            <Text fw={600} size="sm" c={customColors.brand[8]}>
+                              {item.name}
                             </Text>
-                          )}
-                          {item.category && (
-                            <Badge size="xs" variant="light" color="brand" mt="xs">
-                              {item.category}
-                            </Badge>
-                          )}
-                        </Box>
-                        <ActionIcon
-                          variant="subtle"
-                          color="red"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                        >
-                          <IconX size={16} />
-                        </ActionIcon>
-                      </Group>
+                            {item.description && (
+                              <Text
+                                size="xs"
+                                c={customColors.neutral[6]}
+                                lineClamp={2}
+                              >
+                                {item.description}
+                              </Text>
+                            )}
+                            {item.category && (
+                              <Badge
+                                size="xs"
+                                variant="light"
+                                color="brand"
+                                mt="xs"
+                              >
+                                {item.category}
+                              </Badge>
+                            )}
+                          </Box>
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            size="sm"
+                            onClick={() => removeItem(item.id)}
+                          >
+                            <IconX size={16} />
+                          </ActionIcon>
+                        </Group>
 
-                      {/* Cantidad y precio */}
-                      <Group justify="space-between" align="center">
-                        <NumberInput
-                          value={item.quantity}
-                          onChange={(value) => handleQuantityChange(item.id, value)}
-                          min={1}
-                          max={99}
-                          size="xs"
-                          w={80}
-                          styles={{
-                            input: {
-                              textAlign: 'center',
-                            },
-                          }}
-                        />
-                        <Box ta="right">
-                          <Text size="xs" c={customColors.neutral[6]}>
-                            {formatPrice(item.price)} c/u
-                          </Text>
-                          <Text fw={600} c={customColors.brand[6]}>
-                            {formatPrice(item.price * item.quantity)}
-                          </Text>
-                        </Box>
-                      </Group>
-                    </Stack>
-                  </Flex>
-                </Box>
-              ))}
+                        {/* Cantidad y precio */}
+                        <Group justify="space-between" align="center">
+                          <NumberInput
+                            value={item.quantity}
+                            onChange={value =>
+                              handleQuantityChange(item.id, value)
+                            }
+                            min={1}
+                            max={99}
+                            size="xs"
+                            w={80}
+                            styles={{
+                              input: {
+                                textAlign: 'center',
+                              },
+                            }}
+                          />
+                          <Box ta="right">
+                            <Text size="xs" c={customColors.neutral[6]}>
+                              {formatPrice(item.price)} c/u
+                            </Text>
+                            <Text fw={600} c={customColors.brand[6]}>
+                              {formatPrice(
+                                (typeof item.price === 'string'
+                                  ? parseFloat(item.price)
+                                  : item.price) * item.quantity
+                              )}
+                            </Text>
+                          </Box>
+                        </Group>
+                      </Stack>
+                    </Flex>
+                  </Box>
+                );
+              })}
             </Stack>
           </ScrollArea>
 
@@ -227,7 +251,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ opened, onClose }) => {
                     Envío:
                   </Text>
                   <Text size="sm" fw={500}>
-                    {formatPrice(10.00)}
+                    {formatPrice(10.0)}
                   </Text>
                 </Group>
                 <Divider />
@@ -236,7 +260,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ opened, onClose }) => {
                     Total:
                   </Text>
                   <Text size="lg" fw={700} c={customColors.brand[6]}>
-                    {formatPrice(state.total + 10.00)}
+                    {formatPrice(state.total + 10.0)}
                   </Text>
                 </Group>
               </Stack>
@@ -248,8 +272,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ opened, onClose }) => {
                   size="md"
                   color="brand"
                   onClick={() => {
-                    // Navegar a la página de pago
-                    window.location.href = '/cart';
+                    router.push('/cart');
                     onClose();
                   }}
                 >

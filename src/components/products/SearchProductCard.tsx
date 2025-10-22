@@ -1,6 +1,7 @@
 'use client';
 
 import { ProductResponse } from '@/app/actions/HomeProductAction';
+import { getCategoryLabel } from '@/constants/categories';
 import { useUserAccount } from '@/contexts/UserAccountContext';
 import {
   Badge,
@@ -70,24 +71,6 @@ export default function SearchProductCard({ product }: SearchProductCardProps) {
     } finally {
       setIsFavoriteLoading(false);
     }
-  };
-
-  // Get category label
-  const getCategoryLabel = (categoria: string) => {
-    const categories: Record<string, string> = {
-      motor: 'Motor',
-      transmision: 'Transmisión',
-      suspension: 'Suspensión',
-      frenos: 'Frenos',
-      electrico: 'Sistema Eléctrico',
-      carroceria: 'Carrocería',
-      interior: 'Interior',
-      neumaticos: 'Neumáticos',
-      aceites: 'Aceites y Lubricantes',
-      filtros: 'Filtros',
-      otros: 'Otros',
-    };
-    return categories[categoria] || categoria;
   };
 
   return (
@@ -178,7 +161,7 @@ export default function SearchProductCard({ product }: SearchProductCardProps) {
 
         {/* Category */}
         <Badge size="sm" variant="dot" color="blue">
-          {getCategoryLabel(product.categoria)}
+          {getCategoryLabel(product.categoryId || product.categoria)}
         </Badge>
 
         {/* Description */}
@@ -230,7 +213,9 @@ export default function SearchProductCard({ product }: SearchProductCardProps) {
                 price: parseFloat(product.precio),
                 image: productImage,
                 description: product.descripcion,
-                category: getCategoryLabel(product.categoria),
+                category: getCategoryLabel(
+                  product.categoryId || product.categoria
+                ),
               }}
               size="sm"
               fullWidth

@@ -1,6 +1,7 @@
 'use client';
 
 import { quickSearchProductsAction } from '@/app/actions/SearchProductAction';
+import { CATEGORIES } from '@/constants/categories';
 import {
   Box,
   Button,
@@ -20,21 +21,6 @@ import { IconFilter, IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import SearchResults from './SearchResults';
-
-const CATEGORIES = [
-  { value: '', label: 'Todas las categorías' },
-  { value: 'motor', label: 'Motor' },
-  { value: 'transmision', label: 'Transmisión' },
-  { value: 'suspension', label: 'Suspensión' },
-  { value: 'frenos', label: 'Frenos' },
-  { value: 'electrico', label: 'Sistema Eléctrico' },
-  { value: 'carroceria', label: 'Carrocería' },
-  { value: 'interior', label: 'Interior' },
-  { value: 'neumaticos', label: 'Neumáticos' },
-  { value: 'aceites', label: 'Aceites y Lubricantes' },
-  { value: 'filtros', label: 'Filtros' },
-  { value: 'otros', label: 'Otros' },
-];
 
 interface SearchBarProps {
   onSearch?: (searchTerm: string, category?: string) => void;
