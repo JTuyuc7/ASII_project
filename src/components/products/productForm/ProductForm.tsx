@@ -3,6 +3,7 @@ import {
   createProductAction,
   ProductFormData,
 } from '@/app/account/actions/ProductAction';
+import { CATEGORIES } from '@/constants/categories';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import {
   Alert,
@@ -36,20 +37,6 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-const CATEGORIES = [
-  { value: 'motor', label: 'Motor' },
-  { value: 'transmision', label: 'Transmisión' },
-  { value: 'suspension', label: 'Suspensión' },
-  { value: 'frenos', label: 'Frenos' },
-  { value: 'electrico', label: 'Sistema Eléctrico' },
-  { value: 'carroceria', label: 'Carrocería' },
-  { value: 'interior', label: 'Interior' },
-  { value: 'neumaticos', label: 'Neumáticos' },
-  { value: 'aceites', label: 'Aceites y Lubricantes' },
-  { value: 'filtros', label: 'Filtros' },
-  { value: 'otros', label: 'Otros' },
-];
-
 const SellProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -74,7 +61,7 @@ const SellProductForm = () => {
       precio: 0,
       stock: 0,
       descripcion: '',
-      categoria: '',
+      categoryId: 0,
       imagenUrl: [],
     },
     validate: {
@@ -106,7 +93,8 @@ const SellProductForm = () => {
         }
         return null;
       },
-      categoria: value => (!value ? 'Debe seleccionar una categoría' : null),
+      categoryId: value =>
+        !value || value <= 0 ? 'Debe seleccionar una categoría' : null,
       imagenUrl: value => {
         if (!Array.isArray(value)) return 'Las imágenes deben ser un arreglo';
         if (value.length === 0) return 'Debe proporcionar al menos una imagen';
@@ -329,9 +317,16 @@ const SellProductForm = () => {
               label="Categoría"
               placeholder="Selecciona una categoría"
               required
-              data={CATEGORIES}
+              data={CATEGORIES.filter(cat => cat.id !== null)}
               searchable
-              {...form.getInputProps('categoria')}
+              value={
+                form.values.categoryId ? form.values.categoryId.toString() : ''
+              }
+              onChange={value => {
+                const numValue = value ? parseInt(value, 10) : 0;
+                form.setFieldValue('categoryId', numValue);
+              }}
+              error={form.errors.categoryId}
             />
 
             {/* Description */}

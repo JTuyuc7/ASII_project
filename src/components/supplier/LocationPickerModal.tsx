@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Modal, Button, Group, Text, Box } from '@mantine/core';
+import { Box, Button, Group, Modal, Text } from '@mantine/core';
 import { IconMapPin } from '@tabler/icons-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './styles.css';
 
 let mapboxgl: typeof import('mapbox-gl') | null = null;
@@ -42,10 +42,14 @@ export default function LocationPickerModal({
   );
   const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mapKey, setMapKey] = useState(0);
 
   // Get user's current location
   useEffect(() => {
     if (!opened) return;
+
+    // Increment map key to force recreation
+    setMapKey(prev => prev + 1);
 
     if (!('geolocation' in navigator)) {
       setError('Geolocalización no soportada por el navegador.');
@@ -78,8 +82,10 @@ export default function LocationPickerModal({
 
   // Initialize map
   useEffect(() => {
+    if (!opened || !selectedLocation || !containerRef.current) return;
+
     const init = async () => {
-      if (!selectedLocation || !containerRef.current || mapRef.current) return;
+      if (!containerRef.current) return;
 
       const mb = await loadMapbox();
       // @ts-expect-error (no typings)
@@ -124,15 +130,37 @@ export default function LocationPickerModal({
         marker.setLngLat(e.lngLat);
         setSelectedLocation({ lat: e.lngLat.lat, lng: e.lngLat.lng });
       });
-
-      // Cleanup
-      map.on('remove', () => {
-        mapRef.current = null;
-      });
     };
 
     init();
-  }, [selectedLocation]);
+
+    // Cleanup when component unmounts or mapKey changes
+    return () => {
+      if (markerRef.current) {
+        markerRef.current.remove();
+        markerRef.current = null;
+      }
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [mapKey, selectedLocation]);
+
+  // Cleanup map when modal closes
+  useEffect(() => {
+    if (!opened) {
+      // Destroy map when modal closes
+      if (markerRef.current) {
+        markerRef.current.remove();
+        markerRef.current = null;
+      }
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    }
+  }, [opened]);
 
   const handleConfirm = () => {
     if (selectedLocation) {
@@ -200,7 +228,12 @@ export default function LocationPickerModal({
           <div
             ref={containerRef}
             className="mapboxgl-map-styles-supplier"
-            style={{ borderRadius: '8px', marginBottom: '16px' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '8px',
+              marginBottom: '16px',
+            }}
           />
         )}
       </div>
@@ -212,7 +245,7 @@ export default function LocationPickerModal({
           onClick={handleUseCurrentLocation}
           disabled={!userLocation}
         >
-          Usar mi ubicación actual
+          Ver mi ubicación actual
         </Button>
         <Group>
           <Button variant="outline" onClick={onClose}>

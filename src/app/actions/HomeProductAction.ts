@@ -18,7 +18,8 @@ export interface ProductResponse {
   descripcion: string;
   stock: number;
   proveedorId: number;
-  categoria: string;
+  categoria: string; // Deprecated: usar categoryId
+  categoryId: number;
   imagenUrl: string | string[]; // Soporta tanto string único como arreglo
   activo: boolean;
   createdAt: string;

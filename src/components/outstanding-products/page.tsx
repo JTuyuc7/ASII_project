@@ -127,14 +127,16 @@ export default function OutstandingProducts() {
       {/* Products Grid */}
       {!loading && !error && products.length > 0 && (
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-          {products.map(product => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          ))}
+          {products.map(product => {
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            );
+          })}
         </SimpleGrid>
       )}
     </Container>

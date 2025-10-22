@@ -23,7 +23,10 @@ const productSchema = z.object({
     .string()
     .min(10, 'La descripción debe tener al menos 10 caracteres')
     .max(1000, 'La descripción no puede exceder 1000 caracteres'),
-  categoria: z.string().min(1, 'Debe seleccionar una categoría'),
+  categoryId: z
+    .number()
+    .int('El ID de categoría debe ser un número entero')
+    .positive('Debe seleccionar una categoría válida'),
   imagenUrl: z
     .array(z.string().url('Cada URL debe ser válida'))
     .min(1, 'Debe proporcionar al menos una imagen')
@@ -50,7 +53,6 @@ export async function createProductAction(
   try {
     // Validate data with Zod
     const validatedData = productSchema.parse(data);
-    console.log(validatedData, 'validatedData');
 
     if (!token) {
       return {
@@ -72,7 +74,7 @@ export async function createProductAction(
         withCredentials: true,
       }
     );
-
+    console.log(response, 'sdfads');
     return {
       success: true,
       message: 'Producto creado exitosamente',
@@ -81,7 +83,8 @@ export async function createProductAction(
         nombre: response.data.nombre,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error?.response?.data, 'error');
     // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       const fieldErrors: Record<string, string[]> = {};
@@ -92,7 +95,7 @@ export async function createProductAction(
         }
         fieldErrors[path].push(issue.message);
       });
-
+      console.log(fieldErrors, '-*-*-*');
       return {
         success: false,
         message: 'Error de validación',

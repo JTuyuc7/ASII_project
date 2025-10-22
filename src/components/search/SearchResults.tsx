@@ -1,6 +1,7 @@
 'use client';
 
 import { ProductResponse } from '@/app/actions/HomeProductAction';
+import { getCategoryLabel } from '@/constants/categories';
 import {
   Avatar,
   Badge,
@@ -22,7 +23,7 @@ interface SearchResultsProps {
   maxResults?: number;
 }
 
-export default function SearchResults({
+function SearchResults({
   products,
   loading = false,
   onProductClick,
@@ -169,7 +170,7 @@ export default function SearchResults({
                   </Text>
 
                   <Badge size="xs" variant="dot" color="blue">
-                    {getCategoryLabel(product.categoria)}
+                    {getCategoryLabel(product.categoryId || product.categoria)}
                   </Badge>
 
                   {/* Supplier Info */}
@@ -205,21 +206,4 @@ export default function SearchResults({
   );
 }
 
-// Helper function to get category label
-function getCategoryLabel(categoria: string): string {
-  const categories: Record<string, string> = {
-    motor: 'Motor',
-    transmision: 'Transmisión',
-    suspension: 'Suspensión',
-    frenos: 'Frenos',
-    electrico: 'Sistema Eléctrico',
-    carroceria: 'Carrocería',
-    interior: 'Interior',
-    neumaticos: 'Neumáticos',
-    aceites: 'Aceites y Lubricantes',
-    filtros: 'Filtros',
-    otros: 'Otros',
-  };
-
-  return categories[categoria] || categoria;
-}
+export default SearchResults;

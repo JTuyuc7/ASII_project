@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  TextInput,
-  Button,
-  Stack,
-  Group,
-  Paper,
-  Text,
   Box,
+  Button,
+  Group,
   Notification,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconMapPin, IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconMapPin, IconX } from '@tabler/icons-react';
+import { useState } from 'react';
 import LocationPickerModal from './LocationPickerModal';
 
 interface SupplierFormData {
@@ -137,6 +137,8 @@ export default function SupplierRegistrationForm({
                 label="Nombre Comercial"
                 placeholder="Ej: Comercial XYZ"
                 required
+                withAsterisk
+                error={form.errors.nombreComercial}
                 {...form.getInputProps('nombreComercial')}
               />
 
@@ -144,7 +146,9 @@ export default function SupplierRegistrationForm({
                 label="NIT"
                 placeholder="Ej: 1234567-8"
                 required
+                withAsterisk
                 description="Formato: XXXXXXX-X"
+                error={form.errors.NIT}
                 {...form.getInputProps('NIT')}
               />
 
@@ -152,7 +156,9 @@ export default function SupplierRegistrationForm({
                 label="Teléfono"
                 placeholder="Ej: +50212345678"
                 required
+                withAsterisk
                 description="Formato: +502 seguido de 8 dígitos"
+                error={form.errors.telefono}
                 {...form.getInputProps('telefono')}
               />
 
@@ -160,6 +166,8 @@ export default function SupplierRegistrationForm({
                 label="Dirección"
                 placeholder="Ej: Ciudad de Guatemala, Zona 10"
                 required
+                withAsterisk
+                error={form.errors.direccion}
                 {...form.getInputProps('direccion')}
               />
             </Stack>

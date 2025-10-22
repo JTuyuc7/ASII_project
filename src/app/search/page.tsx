@@ -3,6 +3,7 @@
 import { ProductResponse } from '@/app/actions/HomeProductAction';
 import { searchProductsAction } from '@/app/actions/SearchProductAction';
 import SearchProductCard from '@/components/products/SearchProductCard';
+import { CATEGORIES } from '@/constants/categories';
 import {
   Badge,
   Container,
@@ -16,20 +17,6 @@ import {
 import { IconSearch } from '@tabler/icons-react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-
-const CATEGORIES = [
-  { value: 'motor', label: 'Motor' },
-  { value: 'transmision', label: 'Transmisión' },
-  { value: 'suspension', label: 'Suspensión' },
-  { value: 'frenos', label: 'Frenos' },
-  { value: 'electrico', label: 'Sistema Eléctrico' },
-  { value: 'carroceria', label: 'Carrocería' },
-  { value: 'interior', label: 'Interior' },
-  { value: 'neumaticos', label: 'Neumáticos' },
-  { value: 'aceites', label: 'Aceites y Lubricantes' },
-  { value: 'filtros', label: 'Filtros' },
-  { value: 'otros', label: 'Otros' },
-];
 
 function SearchPageContent() {
   const searchParams = useSearchParams();

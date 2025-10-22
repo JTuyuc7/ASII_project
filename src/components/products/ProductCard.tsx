@@ -37,6 +37,7 @@ export interface Product {
   onSale: boolean;
   seller: string;
   coordinates: Coordinates;
+  precio: number;
 }
 
 interface ProductCardProps {
@@ -98,7 +99,7 @@ export default function ProductCard({
         await addToWishlist(product.id.toString(), {
           productId: product.id.toString(),
           name: product.name,
-          price: parseFloat(product.price.replace(/[Q$,]/g, '')),
+          price: product.precio,
           image: productImage,
           inStock: true,
         });
@@ -256,7 +257,7 @@ export default function ProductCard({
           <div>
             <Group gap="xs" align="center">
               <Text size="xl" fw={700} c="brand.9">
-                {product.price}
+                {product.precio.toFixed(2)}
               </Text>
               {product.originalPrice && (
                 <Text size="sm" td="line-through" c="dimmed">
@@ -273,7 +274,7 @@ export default function ProductCard({
             product={{
               id: product.id.toString(),
               name: product.name,
-              price: parseFloat(product.price.replace(/[$,]/g, '')),
+              price: product.precio,
               image: productImage,
               description: `${product.condition} - ${product.seller}`,
               category: 'Auto Partes',
