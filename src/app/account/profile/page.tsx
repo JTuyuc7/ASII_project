@@ -115,7 +115,7 @@ export default function ProfilePage() {
       });
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
-      console.log(error);
+      console.log(error, 'error');
       setNotification({
         type: 'error',
         message: 'Error al actualizar las preferencias',
