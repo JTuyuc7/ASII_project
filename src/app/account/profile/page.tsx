@@ -111,7 +111,7 @@ export default function ProfilePage() {
       await updatePreferences(values);
       setNotification({
         type: 'success',
-        message: 'Preferencias actualizadas correctamente',
+        message: 'Preferencias actualizadas correctamente.',
       });
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
