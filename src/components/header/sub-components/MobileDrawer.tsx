@@ -43,6 +43,7 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
   };
 
   const handleLogout = () => {
+    console.log('logout');
     logout();
     onClose();
   };
@@ -61,6 +62,7 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
 
   const handleNavigation = (path: string) => {
     router.push(path);
+    onClose();
   };
 
   return (
@@ -210,9 +212,10 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
 
                 <Button
                   variant="subtle"
-                  leftSection={<IconLogout size={18} onClick={handleLogout} />}
+                  leftSection={<IconLogout size={18} />}
                   justify="start"
                   color="red"
+                  onClick={handleLogout}
                 >
                   Cerrar Sesión
                 </Button>
