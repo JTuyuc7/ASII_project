@@ -20,6 +20,7 @@ import {
   IconShoppingCart,
   IconUserCircle,
 } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 interface MobileDrawerProps {
   opened: boolean;
@@ -27,7 +28,8 @@ interface MobileDrawerProps {
 }
 
 export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
-  const { isAuthenticated, logout, setCurrentView } = useAuth();
+  const router = useRouter();
+  const { isAuthenticated, logout, isAdmin, setCurrentView } = useAuth();
   const { state, toggleCart } = useCart();
 
   const handleLoginClick = () => {
@@ -37,11 +39,6 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
 
   const handleRegisterClick = () => {
     setCurrentView('register');
-    onClose();
-  };
-
-  const handleMainClick = () => {
-    setCurrentView('main');
     onClose();
   };
 
@@ -60,6 +57,10 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
       style: 'currency',
       currency: 'GTQ',
     }).format(price);
+  };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
   };
 
   return (
@@ -92,19 +93,23 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
           <Stack gap="xs">
             {state.items.length > 0 ? (
               <>
-                {state.items.slice(0, 3).map((item) => (
+                {state.items.slice(0, 3).map(item => (
                   <Box
                     key={item.id}
                     p="xs"
                     style={{
                       backgroundColor: '#f8f9fa',
-                      borderRadius: '8px'
+                      borderRadius: '8px',
                     }}
                   >
                     <Group justify="space-between" gap="xs">
                       <Box style={{ flex: 1 }}>
-                        <Text size="sm" fw={500}>{item.name}</Text>
-                        <Text size="xs" c="dimmed">Cantidad: {item.quantity}</Text>
+                        <Text size="sm" fw={500}>
+                          {item.name}
+                        </Text>
+                        <Text size="xs" c="dimmed">
+                          Cantidad: {item.quantity}
+                        </Text>
                       </Box>
                       <Text size="sm" fw={600} c="brand.9">
                         {formatPrice(item.price * item.quantity)}
@@ -118,7 +123,9 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
                   </Text>
                 )}
                 <Group justify="space-between" mt="xs">
-                  <Text size="sm" fw={600}>Total:</Text>
+                  <Text size="sm" fw={600}>
+                    Total:
+                  </Text>
                   <Text size="sm" fw={700} c="brand.9">
                     {formatPrice(state.total)}
                   </Text>
@@ -159,7 +166,8 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
                   variant="subtle"
                   leftSection={<IconUserCircle size={18} />}
                   justify="start"
-                  onClick={handleMainClick}
+                  // onClick={handleMainClick}
+                  onClick={() => handleNavigation('/account/profile')}
                 >
                   Mi Cuenta
                 </Button>
@@ -167,6 +175,7 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
                   variant="subtle"
                   leftSection={<IconPackage size={18} />}
                   justify="start"
+                  onClick={() => handleNavigation('/account/orders')}
                 >
                   Mis Pedidos
                 </Button>
@@ -174,6 +183,7 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
                   variant="subtle"
                   leftSection={<IconHeart size={18} />}
                   justify="start"
+                  onClick={() => handleNavigation('/account/wishlist')}
                 >
                   Lista de Deseos
                 </Button>
@@ -181,9 +191,23 @@ export default function MobileDrawer({ opened, onClose }: MobileDrawerProps) {
                   variant="subtle"
                   leftSection={<IconSettings size={18} />}
                   justify="start"
+                  onClick={() => handleNavigation('/account/settings')}
                 >
                   Configuración
                 </Button>
+
+                {isAdmin && (
+                  <Button
+                    variant="subtle"
+                    leftSection={<IconSettings size={18} />}
+                    justify="start"
+                    onClick={() => handleNavigation('/admin')}
+                    color="orange"
+                  >
+                    Panel de Admin
+                  </Button>
+                )}
+
                 <Button
                   variant="subtle"
                   leftSection={<IconLogout size={18} onClick={handleLogout} />}

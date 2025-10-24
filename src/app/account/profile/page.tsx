@@ -77,7 +77,7 @@ export default function ProfilePage() {
       });
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
-      console.log(error, 'error in catch');
+      console.log(error);
       setNotification({
         type: 'error',
         message: 'Error al actualizar el perfil',
@@ -95,7 +95,7 @@ export default function ProfilePage() {
       });
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
-      console.log(error, 'error in catch');
+      console.log(error);
       setNotification({
         type: 'error',
         message: 'Error al actualizar la dirección',
@@ -115,7 +115,7 @@ export default function ProfilePage() {
       });
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
-      console.log(error, 'error in catch');
+      console.log(error);
       setNotification({
         type: 'error',
         message: 'Error al actualizar las preferencias',

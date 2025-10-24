@@ -74,7 +74,6 @@ export async function createProductAction(
         withCredentials: true,
       }
     );
-    console.log(response, 'sdfads');
     return {
       success: true,
       message: 'Producto creado exitosamente',
@@ -84,7 +83,6 @@ export async function createProductAction(
       },
     };
   } catch (error: any) {
-    console.log(error?.response?.data, 'error');
     // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       const fieldErrors: Record<string, string[]> = {};
@@ -95,7 +93,7 @@ export async function createProductAction(
         }
         fieldErrors[path].push(issue.message);
       });
-      console.log(fieldErrors, '-*-*-*');
+
       return {
         success: false,
         message: 'Error de validación',

@@ -24,7 +24,6 @@ import {
   Group,
   Image,
   Loader,
-  NumberInput,
   Paper,
   Rating,
   SimpleGrid,
@@ -65,6 +64,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   const [isFavorite, setIsFavorite] = useState(false);
@@ -221,10 +221,6 @@ export default function ProductDetail({ params }: ProductDetailProps) {
       {item.title}
     </Anchor>
   ));
-
-  const handleBuyNow = () => {
-    console.log('Buy now:', { productId: product.id, quantity });
-  };
 
   const handleContactSeller = () => {
     console.log('Contact seller:', product.proveedor.nombreComercial);
@@ -501,15 +497,15 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             <Card withBorder radius="md" p="md">
               <Stack gap="md">
                 <Group align="center">
-                  <Text fw={500}>Cantidad:</Text>
-                  <NumberInput
+                  {/* <Text fw={500}>Cantidad:</Text> */}
+                  {/* <NumberInput
                     value={quantity}
                     onChange={value => setQuantity(Number(value) || 1)}
                     min={1}
                     max={Math.min(product.stock, 10)}
                     w={100}
                     disabled={product.stock === 0}
-                  />
+                  /> */}
                   <Text size="sm" c="dimmed">
                     Stock disponible: {product.stock}
                   </Text>
@@ -528,7 +524,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                     size="lg"
                     fullWidth
                   />
-                  <Button
+                  {/* <Button
                     size="lg"
                     variant="outline"
                     color="brand.9"
@@ -536,7 +532,7 @@ export default function ProductDetail({ params }: ProductDetailProps) {
                     disabled={product.stock === 0}
                   >
                     Comprar Ahora
-                  </Button>
+                  </Button> */}
                 </Group>
 
                 <Group justify="center" gap="md">
@@ -690,9 +686,9 @@ export default function ProductDetail({ params }: ProductDetailProps) {
             <Card withBorder radius="md" p="lg">
               <Group justify="space-between" mb="md">
                 <Title order={3}>Reseñas y Calificaciones</Title>
-                <Button variant="outline" size="sm">
+                {/* <Button variant="outline" size="sm">
                   Escribir Reseña
-                </Button>
+                </Button> */}
               </Group>
 
               {/* Reviews Summary */}

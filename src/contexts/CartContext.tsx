@@ -6,11 +6,13 @@ import React, { createContext, ReactNode, useContext, useReducer } from 'react';
 export interface CartItem {
   id: string;
   name: string;
-  precio: number | string;
+  precio: number;
+  price: number; // Alias para compatibilidad
   quantity: number;
   image?: string;
   description?: string;
   category?: string;
+  proveedorId?: number;
   [key: string]: any; // Para propiedades adicionales que puedan venir del backend
 }
 
@@ -155,6 +157,7 @@ const calculateTotal = (items: CartItem[]): number => {
     const price =
       typeof item.price === 'string' ? parseFloat(item.price) : item.price;
     const validPrice = isNaN(price) ? 0 : price;
+
     return total + validPrice * item.quantity;
   }, 0);
 };
@@ -180,11 +183,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   const addItem = (item: Omit<CartItem, 'quantity'>) => {
-    // Normalizar el precio a número
+    const price =
+      typeof item.price === 'string' ? parseFloat(item.price) : item.price;
     const normalizedItem = {
       ...item,
-      precio:
-        typeof item.precio === 'string' ? parseFloat(item.precio) : item.precio,
+      price,
     };
     dispatch({ type: 'ADD_ITEM', payload: normalizedItem as CartItem });
   };

@@ -46,6 +46,7 @@ function WishlistItemCard({ item }: { item: WishlistItem }) {
   };
 
   const handleAddToCart = () => {
+    console.log(item, 'aca');
     addItem({
       id: item.productId,
       name: item.name,

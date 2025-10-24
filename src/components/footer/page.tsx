@@ -64,7 +64,7 @@ export default function Footer() {
                   fontSize: rem(16),
                 }}
               >
-                AutoParts
+                Auto Partes
               </Box>
 
               {/* Description */}

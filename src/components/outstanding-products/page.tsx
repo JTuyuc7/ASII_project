@@ -78,9 +78,9 @@ export default function OutstandingProducts() {
             Los mejores productos de nuestra comunidad
           </Text>
         </div>
-        <Button variant="outline" color="brand.9">
+        {/* <Button variant="outline" color="brand.9">
           Ver todos
-        </Button>
+        </Button> */}
       </Group>
 
       {/* Loading State */}

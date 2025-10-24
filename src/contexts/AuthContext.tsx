@@ -1,4 +1,5 @@
 'use client';
+// import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 export type AuthView = 'main' | 'login' | 'register';
@@ -35,6 +36,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(false); // Por defecto false, se actualiza al cargar datos
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState<AuthView>('main');
@@ -81,9 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = (
-    token: string,
+    token: string
     //userRole: string = 'user',
-    redirectTo?: string
+    // redirectTo?: string
   ) => {
     localStorage.setItem('authToken', token);
     setIsAuthenticated(true);
@@ -95,15 +97,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAdmin(false);
     }
 
+    setCurrentView('main');
     // If redirectTo is provided, navigate there
-    if (redirectTo && typeof window !== 'undefined') {
-      window.location.href = redirectTo;
-    } else {
-      setCurrentView('main');
-    }
+    // if (redirectTo && typeof window !== 'undefined') {
+    //   console.log(redirectTo, 'redirect tooooo 11')
+    //   // window.location.href = redirectTo;
+    //   router.push(redirectTo);
+    // } else {
+    //   setCurrentView('main');
+    // }
   };
 
   const logout = () => {
+    console.log('se llama aca?');
     localStorage.removeItem('authToken');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userData');

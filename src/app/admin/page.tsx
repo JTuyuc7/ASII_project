@@ -11,7 +11,6 @@ import {
 } from '@mantine/core';
 import {
   IconEdit,
-  IconEye,
   IconPackage,
   IconShoppingCart,
   IconTrendingUp,
@@ -125,7 +124,7 @@ export default function AdminDashboard() {
 
       {/* Recent Orders */}
       <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Group justify="space-between" mb="md">
+        {/* <Group justify="space-between" mb="md">
           <Title order={3}>Pedidos Recientes</Title>
           <Button
             variant="subtle"
@@ -134,7 +133,7 @@ export default function AdminDashboard() {
           >
             Ver todos
           </Button>
-        </Group>
+        </Group> */}
 
         <Stack gap="sm">
           {recentOrders.map(order => (

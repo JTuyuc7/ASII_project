@@ -48,7 +48,7 @@ export default function CartPage() {
     }).format(price);
   };
 
-  const shippingCost = 10.00;
+  const shippingCost = 10.0;
   const tax = state.total * 0.12; // 12% IVA
   const finalTotal = state.total + shippingCost + tax;
 
@@ -88,7 +88,8 @@ export default function CartPage() {
               Carrito de Compras
             </Title>
             <Text c={customColors.neutral[6]}>
-              {state.itemCount} {state.itemCount === 1 ? 'producto' : 'productos'} en tu carrito
+              {state.itemCount}{' '}
+              {state.itemCount === 1 ? 'producto' : 'productos'} en tu carrito
             </Text>
           </Stack>
           <Group gap="sm">
@@ -115,8 +116,14 @@ export default function CartPage() {
           {/* Lista de productos */}
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Stack gap="md">
-              {state.items.map((item) => (
-                <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
+              {state.items.map(item => (
+                <Card
+                  key={item.id}
+                  shadow="sm"
+                  padding="lg"
+                  radius="md"
+                  withBorder
+                >
                   <Group align="flex-start" gap="md">
                     {/* Imagen del producto */}
                     <Box
@@ -146,7 +153,10 @@ export default function CartPage() {
                             justifyContent: 'center',
                           }}
                         >
-                          <IconShoppingCart size={40} color={customColors.neutral[4]} />
+                          <IconShoppingCart
+                            size={40}
+                            color={customColors.neutral[4]}
+                          />
                         </Box>
                       )}
                     </Box>
@@ -159,12 +169,21 @@ export default function CartPage() {
                             {item.name}
                           </Title>
                           {item.description && (
-                            <Text size="sm" c={customColors.neutral[6]} lineClamp={2}>
+                            <Text
+                              size="sm"
+                              c={customColors.neutral[6]}
+                              lineClamp={2}
+                            >
                               {item.description}
                             </Text>
                           )}
                           {item.category && (
-                            <Badge variant="light" color="brand" size="sm" mt="xs">
+                            <Badge
+                              variant="light"
+                              color="brand"
+                              size="sm"
+                              mt="xs"
+                            >
                               {item.category}
                             </Badge>
                           )}
@@ -187,7 +206,9 @@ export default function CartPage() {
                           </Text>
                           <NumberInput
                             value={item.quantity}
-                            onChange={(value) => handleQuantityChange(item.id, value)}
+                            onChange={value =>
+                              handleQuantityChange(item.id, value)
+                            }
                             min={1}
                             max={99}
                             size="sm"
@@ -230,25 +251,15 @@ export default function CartPage() {
                       <Text c={customColors.neutral[6]}>
                         Subtotal ({state.itemCount} productos):
                       </Text>
-                      <Text fw={500}>
-                        {formatPrice(state.total)}
-                      </Text>
+                      <Text fw={500}>{formatPrice(state.total)}</Text>
                     </Group>
                     <Group justify="space-between">
-                      <Text c={customColors.neutral[6]}>
-                        Envío:
-                      </Text>
-                      <Text fw={500}>
-                        {formatPrice(shippingCost)}
-                      </Text>
+                      <Text c={customColors.neutral[6]}>Envío:</Text>
+                      <Text fw={500}>{formatPrice(shippingCost)}</Text>
                     </Group>
                     <Group justify="space-between">
-                      <Text c={customColors.neutral[6]}>
-                        IVA (12%):
-                      </Text>
-                      <Text fw={500}>
-                        {formatPrice(tax)}
-                      </Text>
+                      <Text c={customColors.neutral[6]}>IVA (12%):</Text>
+                      <Text fw={500}>{formatPrice(tax)}</Text>
                     </Group>
                     <Divider />
                     <Group justify="space-between">
@@ -266,10 +277,7 @@ export default function CartPage() {
                     size="lg"
                     color="brand"
                     leftSection={<IconCreditCard size={20} />}
-                    onClick={() => {
-                      // Navegar a checkout
-                      console.log('Proceder al pago');
-                    }}
+                    onClick={() => router.push('/checkout')}
                   >
                     Proceder al Pago
                   </Button>
@@ -308,7 +316,8 @@ export default function CartPage() {
                 variant="light"
               >
                 <Text size="sm">
-                  Si tienes preguntas sobre tu pedido, contacta nuestro servicio al cliente.
+                  Si tienes preguntas sobre tu pedido, contacta nuestro servicio
+                  al cliente.
                 </Text>
               </Alert>
             </Stack>
