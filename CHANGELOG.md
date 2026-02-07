@@ -1,10 +1,10 @@
 # Changelog
 
-## 2025-10-05
+## 2025-10-18
 
 ### Merged PRs
 
-- #29 feat: enale suppliers — @JTuyuc7
+- #40 fix: image and favorite — @JTuyuc7
 
 ### Contributors
 
@@ -12,11 +12,20 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-10-05)
+# 0.1.0 (2025-10-18)
+
+
+### Bug Fixes
+
+* image and favorite ([9a7f8bc](https://github.com/JTuyuc7/ASII_project/commit/9a7f8bc4f8c43baafdb45788fc6a1a521eb6a8c1))
 
 
 ### Features
 
+* add captcha login ([34ab208](https://github.com/JTuyuc7/ASII_project/commit/34ab208ccb024f8751097c1cdb4866a26d72d1f7))
+* add products ([35dacae](https://github.com/JTuyuc7/ASII_project/commit/35dacaed2f5e1ae7d2724257da492f362fb69361))
+* add products ([052a4bf](https://github.com/JTuyuc7/ASII_project/commit/052a4bf3b03d3c9da20a0b668312d82a933dda04))
+* add products on page ([e6791d0](https://github.com/JTuyuc7/ASII_project/commit/e6791d07a1f8aae4c559f5898b40dc7f84808bb2))
 * adding changelog ([9d9fecc](https://github.com/JTuyuc7/ASII_project/commit/9d9feccbd5ae171fc4abff35ccc1e423510069e0))
 * adding changelog ([4214e80](https://github.com/JTuyuc7/ASII_project/commit/4214e80d0b62f50c67731720acdfb9c9287a0372))
 * adding changelog file ([0c4236d](https://github.com/JTuyuc7/ASII_project/commit/0c4236ddb64340b250c3c7a6c4c77f8ad7855896))
@@ -38,17 +47,18 @@
 * maps integration ([2ae3dac](https://github.com/JTuyuc7/ASII_project/commit/2ae3dac4d9936e8098fbb3ea2a7b0ec08535719a))
 * maps integration ([c0e7a3f](https://github.com/JTuyuc7/ASII_project/commit/c0e7a3f68615a03f4c74f968647cb1c2ac7e74c3))
 * navbar and auth context ([ae3d997](https://github.com/JTuyuc7/ASII_project/commit/ae3d9974dd7de8f3739ddaae33a84d7ac6108d74))
+* searcher ([6ee8319](https://github.com/JTuyuc7/ASII_project/commit/6ee8319491360b5029a4b3d3a615699b8e53e141))
 * user pages ([b3dbf65](https://github.com/JTuyuc7/ASII_project/commit/b3dbf65dde7c52f8a692c78185535319191990c4))
 
 
 
 
 
-## 2025-10-05
+## 2025-10-18
 
 ### Merged PRs
 
-- #29 feat: enale suppliers — @JTuyuc7
+- #40 fix: image and favorite — @JTuyuc7
 
 ### Contributors
 
@@ -56,11 +66,20 @@
 
 ### Commits (Conventional Summary)
 
-# 0.1.0 (2025-10-05)
+# 0.1.0 (2025-10-18)
+
+
+### Bug Fixes
+
+* image and favorite ([9a7f8bc](https://github.com/JTuyuc7/ASII_project/commit/9a7f8bc4f8c43baafdb45788fc6a1a521eb6a8c1))
 
 
 ### Features
 
+* add captcha login ([34ab208](https://github.com/JTuyuc7/ASII_project/commit/34ab208ccb024f8751097c1cdb4866a26d72d1f7))
+* add products ([35dacae](https://github.com/JTuyuc7/ASII_project/commit/35dacaed2f5e1ae7d2724257da492f362fb69361))
+* add products ([052a4bf](https://github.com/JTuyuc7/ASII_project/commit/052a4bf3b03d3c9da20a0b668312d82a933dda04))
+* add products on page ([e6791d0](https://github.com/JTuyuc7/ASII_project/commit/e6791d07a1f8aae4c559f5898b40dc7f84808bb2))
 * adding changelog ([9d9fecc](https://github.com/JTuyuc7/ASII_project/commit/9d9feccbd5ae171fc4abff35ccc1e423510069e0))
 * adding changelog ([4214e80](https://github.com/JTuyuc7/ASII_project/commit/4214e80d0b62f50c67731720acdfb9c9287a0372))
 * adding changelog file ([0c4236d](https://github.com/JTuyuc7/ASII_project/commit/0c4236ddb64340b250c3c7a6c4c77f8ad7855896))
@@ -82,6 +101,7 @@
 * maps integration ([2ae3dac](https://github.com/JTuyuc7/ASII_project/commit/2ae3dac4d9936e8098fbb3ea2a7b0ec08535719a))
 * maps integration ([c0e7a3f](https://github.com/JTuyuc7/ASII_project/commit/c0e7a3f68615a03f4c74f968647cb1c2ac7e74c3))
 * navbar and auth context ([ae3d997](https://github.com/JTuyuc7/ASII_project/commit/ae3d9974dd7de8f3739ddaae33a84d7ac6108d74))
+* searcher ([6ee8319](https://github.com/JTuyuc7/ASII_project/commit/6ee8319491360b5029a4b3d3a615699b8e53e141))
 * user pages ([b3dbf65](https://github.com/JTuyuc7/ASII_project/commit/b3dbf65dde7c52f8a692c78185535319191990c4))
 
 
